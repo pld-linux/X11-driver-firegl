@@ -110,12 +110,12 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
     if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 	exit 1
     fi
-    rm -rf include
-    install -d include/{linux,config}
     %{__make} -C %{_kernelsrcdir} mrproper \
 	SUBDIRS=$PWD \
 	O=$PWD \
 	%{?with_verbose:V=1}
+    rm -rf include
+    install -d include/{linux,config}
     ln -sf %{_kernelsrcdir}/config-$cfg .config
     ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
     touch include/config/MARKER
