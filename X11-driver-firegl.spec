@@ -6,29 +6,26 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 #
-
 %define		_min_xfree	4.3.0
 %define		_gcc_ver	%(gcc -dumpversion)
-
+#
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
-Version:	3.7.6
+Version:	3.9.0
 Release:	1
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
 Source0:	http://www2.ati.com/drivers/linux/fglrx-%{_min_xfree}-%{version}.i386.rpm
-# Source0-md5:	8538c3669fd6eab3d17c3669e2d88235
+# Source0-md5:	9f7802ee0bbdeb5172673027056e789d
 Patch0:		firegl-panel.patch
-Patch1:		XFree86-driver-firegl-kh.patch
+Patch1:		%{name}-kh.patch
+Patch2:		%{name}-atomic.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
-%if %{with kernel} && %{with dist_kernel}
-BuildRequires:	kernel-source >= 2.6.0
-%endif
-BuildRequires:	rpm-utils
-BuildRequires:	rpmbuild(macros) >= 1.118
+%{?with_dist_kernel:BuildRequires:	kernel-module-build}
+BuildRequires:	rpmbuild(macros) >= 1.153
 # not used at the moment (see commented make in panel_src)
 #BuildRequires:	XFree86-OpenGL-devel
 #BuildRequires:	qt-devel
@@ -67,7 +64,6 @@ License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
-PreReq:		modutils >= 2.3.18-2
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-video-firegl
@@ -84,7 +80,6 @@ License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
-PreReq:		modutils >= 2.3.18-2
 Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-smp-video-firegl
@@ -101,29 +96,27 @@ install -d panel_src
 tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
 %{?with_dist_kernel:%patch1 -p1}
+%patch2 -p1
 
 %build
 %if %{with kernel}
 cd lib/modules/fglrx/build_mod
-cp 2.6.x/Makefile .
+cp -f 2.6.x/Makefile .
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 		exit 1
 	fi
-	%{__make} -C %{_kernelsrcdir} mrproper \
-		SUBDIRS=$PWD \
-		O=$PWD \
-		%{?with_verbose:V=1}
 	rm -rf include
 	install -d include/{linux,config}
 	ln -sf %{_kernelsrcdir}/config-$cfg .config
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 	touch include/config/MARKER
-	%{__make} -C %{_kernelsrcdir} modules \
-		SUBDIRS=$PWD \
-		O=$PWD \
+	%{__make} -C %{_kernelsrcdir} clean modules \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
-	mv fglrx.ko ../fglrx-$cfg.ko
+	mv fglrx{,-$cfg}.ko
 done
 cd -
 %endif
@@ -138,7 +131,7 @@ cd -
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
-cd lib/modules/fglrx
+cd lib/modules/fglrx/build_mod
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 
 install fglrx-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
