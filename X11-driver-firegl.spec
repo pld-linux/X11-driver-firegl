@@ -8,7 +8,7 @@
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
-Version:	2.9.8
+Version:	2.9.12
 Release:	2
 License:	ATI Binary
 Vendor:		ATI
@@ -67,7 +67,7 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 %prep
 %setup -q -c -T
 unzip %{SOURCE0}
-mv Xfree4.3.0_2.9.08/* .
+mv Xfree4.3.0_2.9.12/* .
 rpm2cpio fglrx-glc22-4.3.0-%{version}.i586.rpm | cpio -i -d
 bzip2 -d -v usr/X11R6/bin/*.bz2
 mkdir panel_src
