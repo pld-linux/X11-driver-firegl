@@ -26,11 +26,11 @@ Requires:	XFree86-libs >= 4.2.0
 Requires:	XFree86-modules >= 4.2.0
 Requires:	kernel-video-firegl = %{version}
 Provides:	XFree86-OpenGL-core
-Obsoletes:	Mesa
-Obsoletes:	XFree86-OpenGL-core
 Conflicts:	XFree86-OpenGL-devel <= 4.2.0-3
 ExclusiveArch:	i586 i686 athlon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Obsoletes:	Mesa
+Obsoletes:	XFree86-OpenGL-core
 
 %define		_noautoreqdep	libGL.so.1.2
 
@@ -87,9 +87,8 @@ cd ../../../../panel_src
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
-install -d $RPM_BUILD_ROOT/usr/lib
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
+	$RPM_BUILD_ROOT{/lib/modules/%{_kernel_ver}/misc/,/usr/lib}
 
 install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
