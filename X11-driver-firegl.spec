@@ -39,6 +39,7 @@ BuildRequires:	cpio
 BuildRequires:	rpmbuild(macros) >= 1.153
 %{?with_userspace:BuildRequires:	qt-devel}
 #BuildRequires:	X11-devel >= %{_min_x11}	# disabled for now
+BuildRequires:	fix_amd64_build
 Requires:	X11-OpenGL-core >= %{_min_x11}
 Requires:	X11-Xserver
 Requires:	X11-driver-firegl(kernel)
