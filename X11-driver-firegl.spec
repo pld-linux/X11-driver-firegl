@@ -3,7 +3,7 @@
 # _without_dist_kernel
 #
 
-%define		_min_xfree	4.3.0
+%define		_min_xfree	4.2.0
 
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
