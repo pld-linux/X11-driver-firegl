@@ -21,11 +21,11 @@ Group:		X11/XFree86
 Source0:	http://www2.ati.com/drivers/linux/fglrx-%{_min_xfree}-%{version}.i386.rpm
 # Source0-md5:	8538c3669fd6eab3d17c3669e2d88235
 Patch0:		firegl-panel.patch
-Patch1:		XFree86-driver-firegl-kh.patch  
+Patch1:		XFree86-driver-firegl-kh.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %if %{with kernel} && %{with dist_kernel}
-BuildRequires:         kernel-source >= 2.6.0
+BuildRequires:	kernel-source >= 2.6.0
 %endif
 BuildRequires:	rpm-utils
 BuildRequires:	rpmbuild(macros) >= 1.118
@@ -107,23 +107,23 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 cd lib/modules/fglrx/build_mod
 cp 2.6.x/Makefile .
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-	exit 1
-    fi
-    %{__make} -C %{_kernelsrcdir} mrproper \
-	SUBDIRS=$PWD \
-	O=$PWD \
-	%{?with_verbose:V=1}
-    rm -rf include
-    install -d include/{linux,config}
-    ln -sf %{_kernelsrcdir}/config-$cfg .config
-    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-    touch include/config/MARKER
-    %{__make} -C %{_kernelsrcdir} modules \
-	SUBDIRS=$PWD \
-	O=$PWD \
-	%{?with_verbose:V=1}
-    mv fglrx.ko ../fglrx-$cfg.ko
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	%{__make} -C %{_kernelsrcdir} mrproper \
+		SUBDIRS=$PWD \
+		O=$PWD \
+		%{?with_verbose:V=1}
+	rm -rf include
+	install -d include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg .config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+	touch include/config/MARKER
+	%{__make} -C %{_kernelsrcdir} modules \
+		SUBDIRS=$PWD \
+		O=$PWD \
+		%{?with_verbose:V=1}
+	mv fglrx.ko ../fglrx-$cfg.ko
 done
 cd -
 %endif
