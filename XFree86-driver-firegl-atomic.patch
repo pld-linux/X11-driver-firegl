@@ -1,0 +1,22 @@
+--- XFree86-driver-firegl-3.9.0/lib/modules/fglrx/build_mod/agpgart_be.c.orig	2004-05-30 22:18:54.797284104 +0200
++++ XFree86-driver-firegl-3.9.0/lib/modules/fglrx/build_mod/agpgart_be.c	2004-05-30 22:17:13.355705568 +0200
+@@ -1402,7 +1402,7 @@
+     }
+ #endif
+ 
+-    atomic_inc(&page->count);
++    atomic_inc(&page->_count);
+     set_bit(PG_locked, &page->flags);
+     atomic_inc(&agp_bridge.current_memory_agp);
+ 
+--- XFree86-driver-firegl-3.9.0/lib/modules/fglrx/build_mod/firegl_public.c.orig	2004-05-30 22:15:49.000000000 +0200
++++ XFree86-driver-firegl-3.9.0/lib/modules/fglrx/build_mod/firegl_public.c	2004-05-30 22:18:41.629285944 +0200
+@@ -2010,7 +2010,7 @@
+     pMmPage = virt_to_page(kaddr);
+ #endif /* LINUX_VERSION_CODE < 0x020400 */
+ 
+-    atomic_inc(&(pMmPage->count));  /* inc usage count of page */
++    atomic_inc(&(pMmPage->_count));  /* inc usage count of page */
+ 
+ #if LINUX_VERSION_CODE >= 0x020400
+   //  __KE_DEBUG3("vm-address 0x%08lx => kernel-page-address 0x%p\n",

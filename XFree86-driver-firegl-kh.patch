@@ -1,0 +1,11 @@
+--- XFree86-driver-firegl-3.2.5/lib/modules/fglrx/build_mod/make.sh.org	2003-09-21 13:27:52.000000000 +0200
++++ XFree86-driver-firegl-3.2.5/lib/modules/fglrx/build_mod/make.sh	2003-09-21 13:29:03.000000000 +0200
+@@ -47,7 +47,7 @@
+ 
+ # ==============================================================
+ # system/kernel identification
+-uname_r=`uname -r`
++uname_r=`rpm -q kernel-headers |awk -F- '{print $3}'`
+ uname_v=`uname -v`
+ uname_s=`uname -s`
+ uname_m=`uname -m`
