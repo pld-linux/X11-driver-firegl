@@ -12,7 +12,8 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	3.11.1
-Release:	1
+%define		_rel	1
+Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
@@ -59,7 +60,7 @@ akcelerowany OpenGL.
 %package -n kernel-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
-Release:	%{release}@%{_kernel_ver_str}
+Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
@@ -76,7 +77,7 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 %package -n kernel-smp-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
-Release:	%{release}@%{_kernel_ver_str}
+Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
