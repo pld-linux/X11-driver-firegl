@@ -20,7 +20,7 @@ Source0:	http://www.schneider-digital.de/download/ati/glx1_linux_X4.3.zip
 # Source0-md5:	09142a7f016e76739b86e70d8e624d77
 Patch0:		firegl-panel.patch
 BuildRequires:	cpio
-%{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
 BuildRequires:	rpmbuild(macros) >= 1.118
 BuildRequires:	unzip
