@@ -22,11 +22,11 @@ License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
 %ifarch	%{ix86}
-Source0:        http://www2.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
+Source0:	http://www2.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
 # Source0-md5:	a3ddb544071b1878ed19984c60623346
 %endif
 %ifarch	amd64
-Source1:        http://www2.ati.com/drivers/linux/fglrx64_6_8_0-%{version}-1.x86_64.rpm
+Source1:	http://www2.ati.com/drivers/linux/fglrx64_6_8_0-%{version}-1.x86_64.rpm
 # Source1-md5:	ca724fda36ecf6c8a60a74e3a1528829
 %endif
 Patch0:		firegl-panel.patch
@@ -34,7 +34,6 @@ Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
-BuildRequires:  sed
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %{?with_userspace:BuildRequires:	qt-devel}
