@@ -128,10 +128,10 @@ cd -
 %endif
 
 %if %{with userspace}
-#%{__make} -C panel_src \
-#	CCFLAGS="%{rpmcflags}" \
-#	MK_QTDIR=/usr \
-#	LIBQT_DYN=qt-mt
+%{__make} -C panel_src \
+	CCFLAGS="%{rpmcflags} -DFGLRX_USE_XEXTENSIONS" \
+	MK_QTDIR=/usr \
+	LIBQT_DYN=qt-mt
 %endif
 
 %install
@@ -156,8 +156,8 @@ install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} 
 
 install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} \
 	$RPM_BUILD_ROOT%{_bindir}
-#install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
-#	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
+install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
+	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
 cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}
 
 ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
