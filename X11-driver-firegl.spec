@@ -117,10 +117,6 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	O=$PWD \
 	%{?with_verbose:V=1}
     ln -sf %{_kernelsrcdir}/config-$cfg .config
-#    %{__make} -C %{_kernelsrcdir} include/linux/autoconf.h \
-#	SUBDIRS=$PWD \
-#	O=$PWD \
-#	%{?with_verbose:V=1}
     ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
     touch include/config/MARKER
     %{__make} -C %{_kernelsrcdir} modules \
@@ -142,9 +138,16 @@ cd -
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
+cd lib/modules/fglrx/build_mod
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
-install lib/modules/fglrx/build_mod/fglrx.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
-install lib/modules/fglrx/build_mod/fglrx-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+
+install fglrx-%{?with_dist_files:up}%{!?with_dist_kernel:nondist}.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/fglrx.ko
+%if %{with smp} && %{with dist_kernel}
+install fglrx-smp.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/fglrx.ko
+%endif
+cd -
 %endif
 
 %if %{with userspace}
@@ -212,7 +215,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
 
+%if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/*.ko*
+%endif
 %endif
