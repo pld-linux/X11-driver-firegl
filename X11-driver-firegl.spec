@@ -9,7 +9,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
 Version:	3.2.5
-Release:	0.1
+Release:	1
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
@@ -17,6 +17,7 @@ URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-4.3.0-3.2.5.i586.rpm
 # Source0-md5:	ca6afde39dd145c5bdcece5d32c4c172
 Patch0:		firegl-panel.patch
+Patch1:		XFree86-driver-firegl-kh.patch  
 BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
@@ -71,6 +72,7 @@ bzip2 -d -v usr/X11R6/bin/*.bz2
 mkdir panel_src
 tar -xzf usr/src/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
+%patch1 -p1
 
 %build
 cd lib/modules/fglrx/build_mod/
