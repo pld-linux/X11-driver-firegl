@@ -5,6 +5,8 @@
 # TODO:
 # - kernel modules (SMP)
 
+%define		_min_xfree	4.3.0
+
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
@@ -13,7 +15,7 @@ Release:	1
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
-Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-4.3.0-%{version}.i586.rpm
+Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-%{_min_xfree}-%{version}.i586.rpm
 # Source0-md5:	824aaaafd4b4867c2456860ea5eff5ec
 Patch0:		firegl-panel.patch
 Patch1:		XFree86-driver-firegl-kh.patch  
@@ -22,10 +24,10 @@ BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
 Requires:	XFree86-Xserver
-Requires:	XFree86-libs >= 4.3.0
-Requires:	XFree86-modules >= 4.3.0
+Requires:	XFree86-libs >= %{_min_xfree}
+Requires:	XFree86-modules >= %{_min_xfree}
 %{!?_without_dist_kernel:Requires:	kernel-video-firegl = %{version} }
-Provides:	XFree86-OpenGL-core
+Provides:	XFree86-OpenGL-core = %{_min_xfree}
 Obsoletes:	Mesa
 Obsoletes:	XFree86-OpenGL-libGL
 Provides:	XFree86-OpenGL-libGL
