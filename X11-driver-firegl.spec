@@ -30,6 +30,7 @@ BuildRequires:	rpmbuild(macros) >= 1.153
 Requires:	X11-Xserver
 Requires:	X11-libs >= %{_min_x11}
 Requires:	X11-modules >= %{_min_x11}
+Requires:	X11-OpenGL-core >= %{_min_x11}
 %{?with_dist_kernel:Requires:	kernel-video-firegl = %{version} }
 Provides:	X11-OpenGL-libGL
 Provides:	XFree86-OpenGL-libGL
