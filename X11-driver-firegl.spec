@@ -7,17 +7,18 @@
 
 %define		_min_xfree	4.3.0
 %define		_gcc_ver	%(gcc -dumpversion)
+%define		mod_name	fglrx
 
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
-Version:	3.7.0
-Release:	3
+Version:	3.9.0
+Release:	1
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
-Source0:	http://www2.ati.com/drivers/linux/fglrx-glc22-%{_min_xfree}-%{version}.i386.rpm
-# Source0-md5:	7dd12340a2b8525b3a9fa1f310e06141
+Source0:	http://www2.ati.com/drivers/linux/fglrx-%{_min_xfree}-%{version}.i386.rpm
+# Source0-md5:	9f7802ee0bbdeb5172673027056e789d
 Patch0:		firegl-panel.patch
 Patch1:		XFree86-driver-firegl-kh.patch  
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
@@ -102,30 +103,29 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 
 %build
 %if %{with kernel}
+# kernel module(s)
 cd lib/modules/fglrx/build_mod
-
-ln -sf %{_kernelsrcdir}/config-up .config
-rm -rf include
-install -d include/{linux,config}
-ln -s %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
-ln -s %{_kernelsrcdir}/include/asm-%{_arch} include/asm
-touch include/config/MARKER
-cp 2.6.x/Makefile Makefile
-%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
-
-mv fglrx.ko fglrx.up
-
-%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 mrproper
-
-ln -sf %{_kernelsrcdir}/config-smp .config
-rm -rf include
-install -d include/{linux,config}
-ln -s %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
-ln -s %{_kernelsrcdir}/include/asm-%{_arch} include/asm
-touch include/config/MARKER
-%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
-
-
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+	exit 1
+    fi
+    rm -rf include
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
+    touch include/config/MARKER
+    cp 2.6.x/Makefile Makefile
+#
+#	patching/creating makefile(s) (optional)
+#
+    %{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 clean modules \
+	RCS_FIND_IGNORE="-name '*.ko' -o" \
+	M=$PWD O=$PWD \
+	%{?with_verbose:V=1}
+    mv fglrx.ko fglrx-$cfg.ko
+done
+cd ../../../../
 %endif
 
 %if %{with userspace}
@@ -138,9 +138,15 @@ touch include/config/MARKER
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
-install lib/modules/fglrx/build_mod/fglrx.up $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/fglrx.ko
-install lib/modules/fglrx/build_mod/fglrx.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/$dir
+cd lib/modules/fglrx/build_mod
+pwd
+install fgrlx-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/$dir/fglrx.ko
+%if %{with smp} && %{with dist_kernel}
+install fglrx-smp.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/$dir/fglrx.ko
+cd ../../../../
 %endif
 
 %if %{with userspace}
