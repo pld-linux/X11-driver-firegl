@@ -4,12 +4,13 @@
 #
 
 %define		_min_xfree	4.3.0
+%define		_gcc_ver	%(gcc -dumpversion)
 
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
 Version:	3.2.8
-Release:	1.5
+Release:	1.6
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
@@ -116,7 +117,7 @@ install lib/modules/fglrx/build_mod/fglrx.o $RPM_BUILD_ROOT/lib/modules/%{_kerne
 install lib/modules/fglrx/build_mod/fglrx-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
 
 install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} $RPM_BUILD_ROOT%{_bindir}
-install panel_src/{fireglcontrol.qt3.gcc3.3.1,fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
+install panel_src/{fireglcontrol.qt3.gcc%{_gcc_ver},fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
 cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}/
 
 cd $RPM_BUILD_ROOT%{_libdir}
