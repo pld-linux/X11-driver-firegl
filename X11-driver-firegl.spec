@@ -21,6 +21,7 @@ Patch0:		firegl-panel.patch
 BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
+BuildRequires:	rpmbuild(macros) >= 1.118
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= 4.2.0
 Requires:	XFree86-modules >= 4.2.0
@@ -107,10 +108,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-p /sbin/ldconfig
 
 %post	-n kernel-video-firegl
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %postun -n kernel-video-firegl
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %files
 %defattr(644,root,root,755)
