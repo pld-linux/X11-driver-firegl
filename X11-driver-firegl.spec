@@ -6,19 +6,19 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 
-%define		_min_x11	6.7.0
+%define		_min_x11	6.8.0
 
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
-Version:	3.14.6
+Version:	8.8.25
 %define		_rel	1
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
-Source0:	http://www2.ati.com/drivers/linux/fglrx-4.3.0-%{version}.i386.rpm
-# Source0-md5:	cd364b6fd6d7b23b3becfe78aab0f98b
+Source0:	http://www2.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
+# Source0-md5:	8245afc1a5f83634ab1b906b8107cd0c
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
