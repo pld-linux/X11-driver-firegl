@@ -89,6 +89,7 @@ cd ../../../../panel_src
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
+install -d $RPM_BUILD_ROOT/usr/lib
 
 install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
@@ -98,6 +99,7 @@ cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}/
 
 cd $RPM_BUILD_ROOT%{_libdir}
 ln -s libGL.so.* libGL.so
+ln -s %{_libdir}/libGL.so $RPM_BUILD_ROOT/usr/lib/libGL.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -114,6 +116,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) /usr/lib/lib*.so*
 %attr(755,root,root) %{_libdir}/lib*.so*
 %attr(755,root,root) %{_libdir}/modules/*/*.so
 %attr(755,root,root) %{_libdir}/modules/*/*.o
