@@ -42,7 +42,7 @@ Obsoletes:	XFree86-driver-firegl
 ExclusiveArch:	i586 i686 athlon pentium3 pentium4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_noautoreqdep	libGL.so.1.2
+%define		_noautoreqdep	libGL.so.1
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
