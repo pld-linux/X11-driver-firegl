@@ -23,9 +23,9 @@ Patch1:		%{name}-kh.patch
 Patch2:		%{name}-atomic.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
-%{?with_dist_kernel:BuildRequires:	kernel-module-build}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
-BuildRequires:	qt-devel
+%{?with_userspace:BuildRequires:	qt-devel}
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= %{_min_xfree}
 Requires:	XFree86-modules >= %{_min_xfree}
