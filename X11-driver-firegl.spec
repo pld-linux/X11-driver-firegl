@@ -12,7 +12,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	3.9.0
-Release:	2
+Release:	3
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
