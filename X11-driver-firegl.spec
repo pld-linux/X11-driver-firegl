@@ -13,18 +13,18 @@ Release:	1
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
-URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-4.3.0-%{version}.i586.rpm
 # Source0-md5:	824aaaafd4b4867c2456860ea5eff5ec
 Patch0:		firegl-panel.patch
 Patch1:		XFree86-driver-firegl-kh.patch  
+URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= 4.3.0
 Requires:	XFree86-modules >= 4.3.0
-Requires:	kernel-video-firegl = %{version}
+%{!?_without_dist_kernel:Requires:	kernel-video-firegl = %{version} }
 Provides:	XFree86-OpenGL-core
 Obsoletes:	Mesa
 Obsoletes:	XFree86-OpenGL-libGL
@@ -81,13 +81,15 @@ sed -e 's#gcc#%{kgcc}#g' -e 's#`id -u` -ne 0#`id -u` -ne `id -u`#g' make.sh.org 
 chmod 755 make.sh
 ./make.sh
 cd ../../../../panel_src
-%{__make} MK_QTDIR=/usr \
+
+%{__make} \
+	MK_QTDIR=/usr \
 	LIBQT_DYN=qt-mt
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
 install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
