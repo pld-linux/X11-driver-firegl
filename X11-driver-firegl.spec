@@ -1,6 +1,8 @@
 #
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	userspace	# don't build userspace tools
 #
 
 %define		_min_xfree	4.3.0
@@ -10,7 +12,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
 Version:	3.7.0
-Release:	1
+Release:	2
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
@@ -20,7 +22,9 @@ Patch0:		firegl-panel.patch
 Patch1:		XFree86-driver-firegl-kh.patch  
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
-%{?with_dist_kernel:BuildRequires:         kernel-source >= 2.2.0 }
+%if %{with kernel} && %{with dist_kernel}
+BuildRequires:         kernel-source >= 2.6.0
+%endif
 BuildRequires:	rpm-utils
 BuildRequires:	rpmbuild(macros) >= 1.118
 # not used at the moment (see commented make in panel_src)
@@ -91,13 +95,14 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 %setup -q -c -T
 rpm2cpio %{SOURCE0} | cpio -i -d
 bzip2 -d -v usr/X11R6/bin/*.bz2
-mkdir panel_src
+install -d panel_src
 tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
 %{?with_dist_kernel:%patch1 -p1}
 
 %build
-cd lib/modules/fglrx/build_mod/
+%if %{with kernel}
+cd lib/modules/fglrx/build_mod
 cp make.sh make.sh.org && rm -f make.sh
 sed -e 's#gcc#%{kgcc}#g' -e 's#`id -u` -ne 0#`id -u` -ne `id -u`#g' make.sh.org > make.sh
 chmod 755 make.sh
@@ -106,26 +111,41 @@ chmod 755 make.sh
 mv fglrx.ko fglrx-smp.ko
 ./make.sh clean
 ./make.sh
-cd ../../../../panel_src
+cd ../../../..
+%endif
 
-#%{__make} \
+%if %{with userspace}
+#%{__make} -C panel_src \
 #	MK_QTDIR=/usr \
 #	LIBQT_DYN=qt-mt
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc/
 
+%if %{with kernel}
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 install lib/modules/fglrx/build_mod/fglrx.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
 install lib/modules/fglrx/build_mod/fglrx-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+%endif
+
+%if %{with userspace}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
+	$RPM_BUILD_ROOT/usr/{%{_lib},include/GL}
 
 install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} $RPM_BUILD_ROOT%{_bindir}
 #install panel_src/{fireglcontrol.qt3.gcc%{_gcc_ver},fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
-cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}/
+cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}
 
-cd $RPM_BUILD_ROOT%{_libdir}
-ln -s libGL.so.* libGL.so
+ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
+
+# OpenGL ABI for Linux compatibility
+ln -sf %{_libdir}/libGL.so.1 $RPM_BUILD_ROOT/usr/%{_lib}/libGL.so.1
+ln -sf %{_libdir}/libGL.so $RPM_BUILD_ROOT/usr/%{_lib}/libGL.so
+
+install usr/include/GL/*.h $RPM_BUILD_ROOT/usr/include/GL
+install usr/X11R6/include/X11/extensions/*.h $RPM_BUILD_ROOT%{_includedir}/X11/extensions
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -145,15 +165,31 @@ rm -rf $RPM_BUILD_ROOT
 %postun -n kernel-smp-video-firegl
 %depmod %{_kernel_ver}smp
 
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) %{_libdir}/lib*.so*
-%attr(755,root,root) %{_libdir}/modules/*/*.so
-%attr(755,root,root) %{_libdir}/modules/*/*.o
-%attr(644,root,root) %{_libdir}/modules/*/*.a
-%attr(755,root,root) /usr/X11R6/lib/libfglrx_gamma.a
+%attr(755,root,root) %{_libdir}/libGL.so.*.*
+%attr(755,root,root) %{_libdir}/libGL.so
+%attr(755,root,root) %{_libdir}/libfglrx_gamma.so.*.*
+# Linux OpenGL ABI compatibility symlinks
+%attr(755,root,root) /usr/%{_lib}/libGL.so.1
+%attr(755,root,root) /usr/%{_lib}/libGL.so
 
+%attr(755,root,root) %{_libdir}/modules/dri/fglrx_dri.so
+%attr(755,root,root) %{_libdir}/modules/drivers/fglrx_drv.o
+%{_libdir}/modules/linux/libfglrxdrm.a
+
+# -devel
+#%attr(755,root,root) %{_libdir}/libfglrx_gamma.so
+#%{_includedir}/X11/include/libfglrx_gamma.h
+#/usr/include/GL/glxATI.h
+
+# -static
+#%{_libdir}/libfglrx_gamma.a
+%endif
+
+%if %{with kernel}
 %files -n kernel-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
@@ -161,3 +197,4 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel-smp-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/*.ko*
+%endif
