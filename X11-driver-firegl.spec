@@ -1,10 +1,11 @@
 # TODO:
 # - kernel modules (SMP)
+
 Summary:	Linux Drivers for ATI FireGL Chips
 Summary(pl):	Sterowniki do kart graficznych ATI FireGL
 Name:		XFree86-driver-firegl
 Version:	2.5.1
-Release:	1
+Release:	2
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
