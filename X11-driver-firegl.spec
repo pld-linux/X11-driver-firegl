@@ -27,9 +27,9 @@ BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-source >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %{?with_userspace:BuildRequires:	qt-devel}
-Requires:	XFree86-Xserver
-Requires:	XFree86-libs >= %{_min_x11}
-Requires:	XFree86-modules >= %{_min_x11}
+Requires:	X11-Xserver
+Requires:	X11-libs >= %{_min_x11}
+Requires:	X11-modules >= %{_min_x11}
 %{?with_dist_kernel:Requires:	kernel-video-firegl = %{version} }
 Provides:	X11-OpenGL-libGL
 Provides:	XFree86-OpenGL-libGL
