@@ -7,7 +7,6 @@
 %bcond_with	verbose		# verbose build (V=1)
 #
 %define		_min_xfree	4.3.0
-%define		_gcc_ver	%(gcc -dumpversion)
 #
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
@@ -26,9 +25,7 @@ URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build}
 BuildRequires:	rpmbuild(macros) >= 1.153
-# not used at the moment (see commented make in panel_src)
-#BuildRequires:	XFree86-OpenGL-devel
-#BuildRequires:	qt-devel
+BuildRequires:	qt-devel
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= %{_min_xfree}
 Requires:	XFree86-modules >= %{_min_xfree}
@@ -122,9 +119,9 @@ cd -
 %endif
 
 %if %{with userspace}
-#%{__make} -C panel_src \
-#	MK_QTDIR=/usr \
-#	LIBQT_DYN=qt-mt
+%{__make} -C panel_src \
+	MK_QTDIR=/usr \
+	LIBQT_DYN=qt-mt
 %endif
 
 %install
@@ -147,8 +144,10 @@ cd -
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
 	$RPM_BUILD_ROOT/usr/{%{_lib},include/GL}
 
-install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} $RPM_BUILD_ROOT%{_bindir}
-#install panel_src/{fireglcontrol.qt3.gcc%{_gcc_ver},fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
+install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} \
+	$RPM_BUILD_ROOT%{_bindir}
+install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
+	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
 cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}
 
 ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
