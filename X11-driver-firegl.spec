@@ -41,9 +41,9 @@ provides 2D display drivers and hardware accelerated OpenGL.
 
 %description -l pl
 Sterowniki do kart graficznych ATI Radeon 8500, 9700, Mobility M9 oraz
-graficznych akaceleratorów FireGL 8700/8800, E1, Z1/X1. Pakiet
+graficznych akceleratorów FireGL 8700/8800, E1, Z1/X1. Pakiet
 dostarcza sterowniki obs³uguj±ce wy¶wietlanie 2D oraz sprzêtowo
-akacelerowany OpenGL.
+akcelerowany OpenGL.
 
 %package -n kernel-video-firegl
 Summary:	ATI kernel module for FireGL support
