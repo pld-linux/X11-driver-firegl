@@ -123,7 +123,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	SUBDIRS=$PWD \
 	O=$PWD \
 	%{?with_verbose:V=1}
-    mv fglrx.ko fglrx-$cfg.ko
+    mv fglrx.ko ../fglrx-$cfg.ko
 done
 cd -
 %endif
@@ -138,10 +138,10 @@ cd -
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
-cd lib/modules/fglrx/build_mod
+cd lib/modules/fglrx
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 
-install fglrx-%{?with_dist_files:up}%{!?with_dist_kernel:nondist}.ko \
+install fglrx-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
 	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/fglrx.ko
 %if %{with smp} && %{with dist_kernel}
 install fglrx-smp.ko \
