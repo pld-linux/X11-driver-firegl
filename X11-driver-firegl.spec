@@ -10,29 +10,24 @@ Vendor:		ATI
 Group:		X11/XFree86
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 Source0:	http://pdownload.mii.instacontent.net/ati/drivers/fglrx-glc22-4.2.0-%{version}.i586.rpm
-Conflicts:	XFree86-OpenGL-devel <= 4.2.0-3
-Obsoletes:	Mesa
-Obsoletes:	XFree86-OpenGL-core
-PreReq:		/sbin/depmod
-PreReq:		modutils >= 2.3.18-2
-Provides:	XFree86-OpenGL-core
+BuildRequires:	cpio
+%{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
+BuildRequires:	rpm-utils
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= 4.2.0
 Requires:	XFree86-modules >= 4.2.0
 Requires:	kernel-video-firegl = %{version}
-%{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
-BuildRequires:	rpm-utils
-BuildRequires:	bzip2
-BuildRequires:	cpio
+Provides:	XFree86-OpenGL-core
+Obsoletes:	Mesa
+Obsoletes:	XFree86-OpenGL-core
+Conflicts:	XFree86-OpenGL-devel <= 4.2.0-3
 ExclusiveArch:	i586 i686 athlon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1.2
 
-%define		_fontdir	/usr/share/fonts
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
-%define		_appnkldir	%{_datadir}/applnk
 
 %description
 Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
@@ -47,18 +42,20 @@ akcelerowany OpenGL.
 
 %package -n kernel-video-firegl
 Summary:	ATI kernel module for FireGL support
-Summary(pl):	Modu³ kernela oferuj±cy wsparcie dla ATI FireGL
+Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{release}@%{_kernel_ver_str}
 License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
 %{!?_without_dist_kernel:%requires_releq_kernel_up}
+PreReq:		modutils >= 2.3.18-2
+Requires(post,postun):	/sbin/depmod
 
 %description -n kernel-video-firegl
 ATI kernel module for FireGL support.
 
 %description -n kernel-video-firegl -l pl
-Modu³ kernela oferuj±cy wsparcie dla ATI FireGL.
+Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
