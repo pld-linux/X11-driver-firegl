@@ -31,7 +31,7 @@
  //    printf ( "%s\n", lfile.data() ) ;
  
 -    QApplication::setStyle ( new QWindowsStyle ) ;
-+//    QApplication::setStyle ( new QWindowsStyle ) ;
++    QApplication::setStyle ( "Windows" ) ;
  
      QApplication a( argc, argv );
  
