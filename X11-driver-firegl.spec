@@ -10,7 +10,7 @@ Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
 Version:	3.2.8
 Release:	1.5
-License:	ATI Binary
+License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
 Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-%{_min_xfree}-%{version}.i586.rpm
