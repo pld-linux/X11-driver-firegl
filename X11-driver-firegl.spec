@@ -6,7 +6,6 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 
-%define		_min_xfree	4.3.0
 %define		_min_x11	6.7.0
 
 Summary:	Linux Drivers for ATI graphics accelerators
@@ -17,7 +16,7 @@ Release:	1
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
-Source0:	http://www2.ati.com/drivers/linux/fglrx-%{_min_xfree}-%{version}.i386.rpm
+Source0:	http://www2.ati.com/drivers/linux/fglrx-4.3.0-%{version}.i386.rpm
 # Source0-md5:	9f7802ee0bbdeb5172673027056e789d
 Patch0:		firegl-panel.patch
 Patch1:		%{name}-kh.patch
@@ -27,12 +26,12 @@ BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-source >= 2.6.7}
 BuildRequires:	rpmbuild(macros) >= 1.153
 %{?with_userspace:BuildRequires:	qt-devel}
+Requires:	X11-OpenGL-core >= %{_min_x11}
+Provides:	X11-OpenGL-libGL
 Requires:	X11-Xserver
+Requires:	X11-driver-firegl(kernel)
 Requires:	X11-libs >= %{_min_x11}
 Requires:	X11-modules >= %{_min_x11}
-Requires:	X11-OpenGL-core >= %{_min_x11}
-%{?with_dist_kernel:Requires:	kernel-video-firegl = %{version} }
-Provides:	X11-OpenGL-libGL
 Provides:	XFree86-OpenGL-libGL
 Provides:	XFree86-driver-firegl
 Obsoletes:	Mesa
@@ -67,6 +66,7 @@ Vendor:		ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
+Provides:	X11-driver-firegl(kernel)
 
 %description -n kernel-video-firegl
 ATI kernel module for FireGL support.
@@ -83,6 +83,7 @@ Vendor:		ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
+Provides:	X11-driver-firegl(kernel)
 
 %description -n kernel-smp-video-firegl
 ATI kernel module for FireGL support.
@@ -114,8 +115,11 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 	touch include/config/MARKER
-	%{__make} -C %{_kernelsrcdir} clean modules \
+	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
 		M=$PWD O=$PWD \
 		%{?with_verbose:V=1}
 	mv fglrx{,-$cfg}.ko
@@ -125,6 +129,7 @@ cd -
 
 %if %{with userspace}
 %{__make} -C panel_src \
+	CCFLAGS="%{rpmcflags}" \
 	MK_QTDIR=/usr \
 	LIBQT_DYN=qt-mt
 %endif
