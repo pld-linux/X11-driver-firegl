@@ -13,28 +13,15 @@
 %undefine with_dist_kernel
 %endif
 
-%define		need_x86	0
-%define		need_amd64	0
-
-%if %{with incall}
-
-%define		need_x86	1
-%define		need_amd64	1
-
-%else
-
-%ifarch amd64
-
-%define		need_amd64	1
-
-%endif
-
 %ifarch %{ix86}
-
 %define		need_x86	1
-
+%else
+%define		need_x86	0%{?with_incall:1}
 %endif
-
+%ifarch amd64
+%define		need_amd64	1
+%else
+%define		need_amd64	0%{?with_incall:1}
 %endif
 
 Summary:	Linux Drivers for ATI graphics accelerators
@@ -46,11 +33,11 @@ Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
-%if	%{need_x86}
+%if %{need_x86}
 Source0:	http://www2.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
 # Source0-md5:	a3ddb544071b1878ed19984c60623346
 %endif
-%if	%{need_amd64}
+%if %{need_amd64}
 Source1:	http://www2.ati.com/drivers/linux/fglrx64_6_8_0-%{version}-1.x86_64.rpm
 # Source1-md5:	ca724fda36ecf6c8a60a74e3a1528829
 %endif
