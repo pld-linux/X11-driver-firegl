@@ -1,16 +1,15 @@
 # TODO:
 # - kernel modules (SMP)
-# - missing obsoletes/conflicts
 Summary:	Linux Drivers for ATI FireGL Chips
 Summary(pl):	Sterowniki do kart graficznych ATI FireGL
 Name:		XFree86-driver-firegl
-Version:	1.9.20
+Version:	2.5.1
 Release:	1
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
-URL:		http://www.ati.com/support/drivers/firegl/linux/linuxfiregl4x4201920.html
-Source0:	http://mirror2.ati.com/drivers/firegl/fgl23glibc22-X42-%{version}.tgz
+URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
+Source0:	http://pdownload.mii.instacontent.net/ati/drivers/fglrx-glc22-4.2.0-%{version}.i586.rpm
 Conflicts:	XFree86-OpenGL-devel <= 4.2.0-3
 Obsoletes:	Mesa
 Obsoletes:	XFree86-OpenGL-core
@@ -22,7 +21,10 @@ Requires:	XFree86-libs >= 4.2.0
 Requires:	XFree86-modules >= 4.2.0
 Requires:	kernel-video-firegl = %{version}
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
-ExclusiveArch:	%{ix86}
+BuildRequires:	rpm-utils
+BuildRequires:	bzip2
+BuildRequires:	cpio
+ExclusiveArch:	i586 i686 athlon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1.2
@@ -33,10 +35,15 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_appnkldir	%{_datadir}/applnk
 
 %description
-Linux Drivers for ATI FireGL Chips.
+Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
+the FireGL 8700/8800, E1, Z1/X1 graphics accelerators. This package
+provides 2D display drivers and hardware accelerated OpenGL.
 
 %description -l pl
-Sterowniki do kart graficznych ATI FireGL.
+Sterowniki do kart graficznych ATI Radeon 8500, 9700, Mobility M9 oraz
+graficznych akaceleratorów FireGL 8700/8800, E1, Z1/X1. Pakiet
+dostarcza sterowniki obs³uguj±ce wy¶wietlanie 2D oraz sprzêtowo
+akacelerowany OpenGL.
 
 %package -n kernel-video-firegl
 Summary:	ATI kernel module for FireGL support
@@ -54,10 +61,12 @@ ATI kernel module for FireGL support.
 Modu³ kernela oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
-%setup -q -c
-tar xfz fgl*.tgz && rm -f fgl*.tgz
+%setup -q -c -T
+rpm2cpio %{SOURCE0} | cpio -i -d
+bzip2 -d -v usr/X11R6/bin/*.bz2
 
 %build
+cd lib/modules/fglrx/build_mod/
 cp make.sh make.sh.org && rm -f make.sh
 sed -e 's#gcc#%{kgcc}#g' -e 's#`id -u` -ne 0#`id -u` -ne `id -u`#g' make.sh.org > make.sh
 chmod 755 make.sh
@@ -67,16 +76,13 @@ chmod 755 make.sh
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_bindir}
 install -d $RPM_BUILD_ROOT%{_includedir}/X11/extensions
-install -d $RPM_BUILD_ROOT%{_libdir}/modules/{drivers,extensions,dri}
+install -d $RPM_BUILD_ROOT%{_libdir}
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
-install -D firegl23.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/firegl23.o
+install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
-install fgl_gamma.h		$RPM_BUILD_ROOT%{_includedir}/X11/extensions
-install fgl_xgamma fgl_glxgears firegl23config fireglinfo $RPM_BUILD_ROOT%{_bindir}
-install libfgl_gamma.a 		$RPM_BUILD_ROOT%{_libdir}
-install *.so.*			$RPM_BUILD_ROOT%{_libdir}
-install *_drv.o			$RPM_BUILD_ROOT%{_libdir}/modules/drivers
-install *_dri.so		$RPM_BUILD_ROOT%{_libdir}/modules/dri
+install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo,fireglcontrol.qt2} $RPM_BUILD_ROOT%{_bindir}
+cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}/
 
 cd $RPM_BUILD_ROOT%{_libdir}
 ln -s libGL.so.* libGL.so
@@ -95,14 +101,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc readme.txt
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_libdir}/lib*.so*
-%attr(755,root,root) %{_libdir}/lib*.a
-%attr(755,root,root) %{_libdir}/modules/dri/*.so
-%attr(755,root,root) %{_libdir}/modules/drivers/*_drv.o
-%{_includedir}/X11/extensions/*.h
+%attr(755,root,root) %{_libdir}/modules/*/*.so
+%attr(755,root,root) %{_libdir}/modules/*/*.o
+%attr(644,root,root) %{_libdir}/modules/*/*.a
 
 %files -n kernel-video-firegl
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/misc/*.o
+/lib/modules/%{_kernel_ver}/misc/*.o*
