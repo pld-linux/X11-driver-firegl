@@ -5,9 +5,9 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
-#
+
 %define		_min_xfree	4.3.0
-#
+
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
