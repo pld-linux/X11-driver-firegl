@@ -2,7 +2,9 @@
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
+%bcond_with	verbose		# verbose build (V=1)
 #
 
 %define		_min_xfree	4.3.0
@@ -38,7 +40,7 @@ Provides:	XFree86-OpenGL-core = %{_min_xfree}
 Provides:	XFree86-OpenGL-libGL
 Obsoletes:	Mesa
 Obsoletes:	XFree86-OpenGL-libGL
-ExclusiveArch:	i586 i686 athlon
+ExclusiveArch:	i586 i686 athlon pentium3 pentium4
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1.2
@@ -103,15 +105,31 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %build
 %if %{with kernel}
 cd lib/modules/fglrx/build_mod
-cp make.sh make.sh.org && rm -f make.sh
-sed -e 's#gcc#%{kgcc}#g' -e 's#`id -u` -ne 0#`id -u` -ne `id -u`#g' make.sh.org > make.sh
-chmod 755 make.sh
-./make.sh \
-	SMP=1
-mv fglrx.ko fglrx-smp.ko
-./make.sh clean
-./make.sh
-cd ../../../..
+cp 2.6.x/Makefile .
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+	exit 1
+    fi
+    rm -rf include
+    install -d include/{linux,config}
+    %{__make} -C %{_kernelsrcdir} mrproper \
+	SUBDIRS=$PWD \
+	O=$PWD \
+	%{?with_verbose:V=1}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+#    %{__make} -C %{_kernelsrcdir} include/linux/autoconf.h \
+#	SUBDIRS=$PWD \
+#	O=$PWD \
+#	%{?with_verbose:V=1}
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    touch include/config/MARKER
+    %{__make} -C %{_kernelsrcdir} modules \
+	SUBDIRS=$PWD \
+	O=$PWD \
+	%{?with_verbose:V=1}
+    mv fglrx.ko fglrx-$cfg.ko
+done
+cd -
 %endif
 
 %if %{with userspace}
