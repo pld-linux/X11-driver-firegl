@@ -1,6 +1,6 @@
 #
 # Conditional build:
-# _without_dist_kernel
+%bcond_without	dist_kernel	# without distribution kernel
 #
 
 %define		_min_xfree	4.3.0
@@ -20,20 +20,20 @@ Patch0:		firegl-panel.patch
 Patch1:		XFree86-driver-firegl-kh.patch  
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
-%{!?_without_dist_kernel:BuildRequires:         kernel-source >= 2.2.0 }
+%{?with_dist_kernel:BuildRequires:         kernel-source >= 2.2.0 }
 BuildRequires:	rpm-utils
-BuildRequires:	qt-devel
-BuildRequires:	XFree86-OpenGL-devel
-BuildRequires:	xrender-devel
-BuildRequires:	xft-devel
+BuildRequires:	rpmbuild(macros) >= 1.118
+# not used at the moment (see commented make in panel_src)
+#BuildRequires:	XFree86-OpenGL-devel
+#BuildRequires:	qt-devel
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= %{_min_xfree}
 Requires:	XFree86-modules >= %{_min_xfree}
-%{!?_without_dist_kernel:Requires:	kernel-video-firegl = %{version} }
+%{?with_dist_kernel:Requires:	kernel-video-firegl = %{version} }
 Provides:	XFree86-OpenGL-core = %{_min_xfree}
+Provides:	XFree86-OpenGL-libGL
 Obsoletes:	Mesa
 Obsoletes:	XFree86-OpenGL-libGL
-Provides:	XFree86-OpenGL-libGL
 ExclusiveArch:	i586 i686 athlon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -60,7 +60,7 @@ Release:	%{release}@%{_kernel_ver_str}
 License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
-%{!?_without_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel_up}
 PreReq:		modutils >= 2.3.18-2
 Requires(post,postun):	/sbin/depmod
 
@@ -77,7 +77,7 @@ Release:	%{release}@%{_kernel_ver_str}
 License:	ATI
 Vendor:		ATI
 Group:		Base/Kernel
-%{!?_without_dist_kernel:%requires_releq_kernel_smp}
+%{?with_dist_kernel:%requires_releq_kernel_smp}
 PreReq:		modutils >= 2.3.18-2
 Requires(post,postun):	/sbin/depmod
 
@@ -94,7 +94,7 @@ bzip2 -d -v usr/X11R6/bin/*.bz2
 mkdir panel_src
 tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
-%{!?_without_dist_kernel:%patch1 -p1}
+%{?with_dist_kernel:%patch1 -p1}
 
 %build
 cd lib/modules/fglrx/build_mod/
@@ -134,16 +134,16 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-p /sbin/ldconfig
 
 %post	-n kernel-video-firegl
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %postun -n kernel-video-firegl
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %post	-n kernel-smp-video-firegl
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver}smp }%{_kernel_ver}smp
+%depmod %{_kernel_ver}smp
 
 %postun -n kernel-smp-video-firegl
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver}smp }%{_kernel_ver}smp
+%depmod %{_kernel_ver}smp
 
 %files
 %defattr(644,root,root,755)
