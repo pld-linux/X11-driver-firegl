@@ -22,6 +22,7 @@ BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
 BuildRequires:	rpmbuild(macros) >= 1.118
+BuildRequires:	unzip
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= 4.2.0
 Requires:	XFree86-modules >= 4.2.0
