@@ -103,15 +103,16 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %build
 %if %{with kernel}
 cd lib/modules/fglrx/build_mod
-cp make.sh make.sh.org && rm -f make.sh
-sed -e 's#gcc#%{kgcc}#g' -e 's#`id -u` -ne 0#`id -u` -ne `id -u`#g' make.sh.org > make.sh
-chmod 755 make.sh
-./make.sh \
-	SMP=1
-mv fglrx.ko fglrx-smp.ko
-./make.sh clean
-./make.sh
-cd ../../../..
+
+ln -sf %{_kernelsrcdir}/config-up .config
+rm -rf include
+install -d include/{linux,config}
+ln -s %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
+ln -s %{_kernelsrcdir}/include/asm-%{_arch} include/asm
+touch include/config/MARKER
+echo 'obj-m := fglrx.o' > Makefile
+%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
+
 %endif
 
 %if %{with userspace}
