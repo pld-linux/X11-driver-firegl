@@ -21,7 +21,12 @@ Patch1:		XFree86-driver-firegl-kh.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
-BuildRequires:	rpm-utils
+BuildRequires: rpm-utils
+BuildRequires: qt-devel
+BuildRequires: kernel-sources
+BuildRequires: XFree86-OpenGL-devel
+BuildRequires: xrender-devel
+BuildRequires: xft-devel
 Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= %{_min_xfree}
 Requires:	XFree86-modules >= %{_min_xfree}
