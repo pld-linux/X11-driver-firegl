@@ -14,7 +14,7 @@ License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
 Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-%{_min_xfree}-%{version}.i586.rpm
-# Source0-md5:	824aaaafd4b4867c2456860ea5eff5ec
+# Source0-md5:	5a8ccc52d26276b58f8b5b3f7349b29f
 Patch0:		firegl-panel.patch
 Patch1:		XFree86-driver-firegl-kh.patch  
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
