@@ -16,6 +16,7 @@ Group:		X11/XFree86
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #Source0:	http://pdownload.mii.instacontent.net/ati/drivers/fglrx-glc22-4.2.0-%{version}.i586.rpm
 Source0:	http://www.schneider-digital.de/download/ati/glx1_linux_X4.3.zip
+# Source0-md5:	fe639a099016f6185c938638010b3e24
 Patch0:		firegl-panel.patch
 BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
