@@ -1,16 +1,21 @@
+#
+# Conditional build:
+# _without_dist_kernel
+#
 # TODO:
 # - kernel modules (SMP)
 
-Summary:	Linux Drivers for ATI FireGL Chips
-Summary(pl):	Sterowniki do kart graficznych ATI FireGL
+Summary:	Linux Drivers for ATI graphics accelerators
+Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
-Version:	2.5.1
-Release:	2
+Version:	2.9.8
+Release:	1
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
-Source0:	http://pdownload.mii.instacontent.net/ati/drivers/fglrx-glc22-4.2.0-%{version}.i586.rpm
+#Source0:	http://pdownload.mii.instacontent.net/ati/drivers/fglrx-glc22-4.2.0-%{version}.i586.rpm
+Source0:	http://www.schneider-digital.de/download/ati/glx1_linux_X4.3.zip
 BuildRequires:	cpio
 %{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
@@ -60,7 +65,9 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
-rpm2cpio %{SOURCE0} | cpio -i -d
+unzip %{SOURCE0}
+mv Xfree4.3.0_2.9.08/* .
+rpm2cpio fglrx-glc22-4.3.0-%{version}.i586.rpm | cpio -i -d
 bzip2 -d -v usr/X11R6/bin/*.bz2
 
 %build
@@ -72,14 +79,12 @@ chmod 755 make.sh
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{_includedir}/X11/extensions
-install -d $RPM_BUILD_ROOT%{_libdir}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
 install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
-install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo,fireglcontrol.qt2} $RPM_BUILD_ROOT%{_bindir}
+install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo,fireglcontrol.qt3.gcc3.2} $RPM_BUILD_ROOT%{_bindir}
 cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}/
 
 cd $RPM_BUILD_ROOT%{_libdir}
