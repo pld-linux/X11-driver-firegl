@@ -30,7 +30,6 @@ Requires:	XFree86-Xserver
 Requires:	XFree86-libs >= %{_min_xfree}
 Requires:	XFree86-modules >= %{_min_xfree}
 %{?with_dist_kernel:Requires:	kernel-video-firegl = %{version} }
-Provides:	XFree86-OpenGL-core = %{_min_xfree}
 Provides:	XFree86-OpenGL-libGL
 Obsoletes:	Mesa
 Obsoletes:	XFree86-OpenGL-libGL
