@@ -1,4 +1,8 @@
 #
+#
+# TODO:
+# fix OpenGL on AMD64
+#
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -12,13 +16,15 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.8.25
-%define		_rel	1
+%define		_rel	2
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
 Source0:	http://www2.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
 # Source0-md5:	8245afc1a5f83634ab1b906b8107cd0c
+Source1:	http://www2.ati.com/drivers/linux/fglrx64_6_8_0-%{version}-1.x86_64.rpm
+# Source1-md5:	4967e36a1bdf275a37251605b6a2356c
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
@@ -39,13 +45,16 @@ Obsoletes:	Mesa
 Obsoletes:	X11-OpenGL-libGL
 Obsoletes:	XFree86-OpenGL-libGL
 Obsoletes:	XFree86-driver-firegl
-ExclusiveArch:	i586 i686 athlon pentium3 pentium4
+ExclusiveArch:	i586 i686 athlon pentium3 pentium4 amd64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1
 
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
+%ifarch amd64
+%define		_libdir32	%{_prefix}/lib
+%endif
 
 %description
 Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
@@ -94,7 +103,11 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
+%ifarch amd64
+rpm2cpio %{SOURCE1} | cpio -i -d
+%else
 rpm2cpio %{SOURCE0} | cpio -i -d
+%endif
 install -d panel_src
 tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
@@ -139,13 +152,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
 cd lib/modules/fglrx/build_mod
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
+install -d $RPM_BUILD_ROOT/%{_libdir}/modules/%{_kernel_ver}{,smp}/misc
 
 install fglrx-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/fglrx.ko
+	$RPM_BUILD_ROOT/%{_libdir}/modules/%{_kernel_ver}/misc/fglrx.ko
 %if %{with smp} && %{with dist_kernel}
 install fglrx-smp.ko \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/fglrx.ko
+	$RPM_BUILD_ROOT/%{_libdir}/modules/%{_kernel_ver}smp/misc/fglrx.ko
 %endif
 cd -
 %endif
@@ -158,7 +171,11 @@ install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} \
 	$RPM_BUILD_ROOT%{_bindir}
 install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
 	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
+%ifarch amd64
+cp -r usr/X11R6/lib64/* $RPM_BUILD_ROOT%{_libdir}
+%else
 cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}
+%endif
 
 ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
 
@@ -215,11 +232,11 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with kernel}
 %files -n kernel-video-firegl
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/misc/*.ko*
+/%{_libdir}/modules/%{_kernel_ver}/misc/*.ko*
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-video-firegl
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/*.ko*
+/%{_libdir}/modules/%{_kernel_ver}smp/misc/*.ko*
 %endif
 %endif
