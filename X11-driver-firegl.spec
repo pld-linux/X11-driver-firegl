@@ -12,7 +12,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
 Version:	3.7.0
-Release:	2
+Release:	3
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
@@ -110,8 +110,21 @@ install -d include/{linux,config}
 ln -s %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
 ln -s %{_kernelsrcdir}/include/asm-%{_arch} include/asm
 touch include/config/MARKER
-echo 'obj-m := fglrx.o' > Makefile
+cp 2.6.x/Makefile Makefile
 %{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
+
+mv fglrx.ko fglrx.up
+
+%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 mrproper
+
+ln -sf %{_kernelsrcdir}/config-smp .config
+rm -rf include
+install -d include/{linux,config}
+ln -s %{_kernelsrcdir}/include/linux/autoconf.h include/linux/autoconf.h
+ln -s %{_kernelsrcdir}/include/asm-%{_arch} include/asm
+touch include/config/MARKER
+%{__make} -C %{_kernelsrcdir} SUBDIRS=$PWD O=$PWD V=1 modules
+
 
 %endif
 
@@ -126,8 +139,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
-install lib/modules/fglrx/build_mod/fglrx.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
-install lib/modules/fglrx/build_mod/fglrx-smp.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+install lib/modules/fglrx/build_mod/fglrx.up $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/fglrx.ko
+install lib/modules/fglrx/build_mod/fglrx.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
 %endif
 
 %if %{with userspace}
