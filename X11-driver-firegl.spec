@@ -72,7 +72,7 @@ bzip2 -d -v usr/X11R6/bin/*.bz2
 mkdir panel_src
 tar -xzf usr/src/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
-%patch1 -p1
+#%patch1 -p1
 
 %build
 cd lib/modules/fglrx/build_mod/
