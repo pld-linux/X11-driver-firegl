@@ -49,10 +49,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_prefix		/usr/X11R6
 %define		_mandir		%{_prefix}/man
 
-%ifarch amd64
-%define         _libdir32       %{_prefix}/lib
-%endif
-
 %description
 Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
 the FireGL 8700/8800, E1, Z1/X1 graphics accelerators. This package
@@ -168,11 +164,7 @@ install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} \
 	$RPM_BUILD_ROOT%{_bindir}
 install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
 	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
-%ifarch amd64
-cp -r usr/X11R6/lib64/* $RPM_BUILD_ROOT%{_libdir}
-%else
-cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}
-%endif
+cp -r usr/X11R6/%{_lib}/* $RPM_BUILD_ROOT%{_libdir}
 
 ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
 
