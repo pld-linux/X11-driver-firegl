@@ -31,7 +31,8 @@ Source1:	http://www2.ati.com/drivers/linux/fglrx64_6_8_0-%{version}-1.x86_64.rpm
 %endif
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
-Patch2:		%{name}-kh.patch
+Patch2:		%{name}-kernel-2_6_11.patch
+Patch3:		%{name}-kh.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
@@ -111,9 +112,11 @@ rpm2cpio %{SOURCE0} | cpio -i -d
 %endif
 install -d panel_src
 tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
+
 %patch0 -p1
 %patch1 -p1
-%{?with_dist_kernel:%patch2 -p1}
+%patch2 -p1
+%{?with_dist_kernel:%patch3 -p1}
 
 %build
 %if %{with kernel}
