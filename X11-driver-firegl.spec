@@ -2,8 +2,6 @@
 # Conditional build:
 # _without_dist_kernel
 #
-# TODO:
-# - kernel modules (SMP)
 
 %define		_min_xfree	4.3.0
 
@@ -11,7 +9,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
 Version:	3.2.8
-Release:	1
+Release:	1.5
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
@@ -67,6 +65,23 @@ ATI kernel module for FireGL support.
 %description -n kernel-video-firegl -l pl
 Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
+%package -n kernel-smp-video-firegl
+Summary:	ATI kernel module for FireGL support
+Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
+Release:	%{release}@%{_kernel_ver_str}
+License:	ATI
+Vendor:		ATI
+Group:		Base/Kernel
+%{!?_without_dist_kernel:%requires_releq_kernel_smp}
+PreReq:		modutils >= 2.3.18-2
+Requires(post,postun):	/sbin/depmod
+
+%description -n kernel-smp-video-firegl
+ATI kernel module for FireGL support.
+
+%description -n kernel-smp-video-firegl -l pl
+Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
+
 %prep
 %setup -q -c -T
 rpm2cpio %{SOURCE0} | cpio -i -d
@@ -81,6 +96,10 @@ cd lib/modules/fglrx/build_mod/
 cp make.sh make.sh.org && rm -f make.sh
 sed -e 's#gcc#%{kgcc}#g' -e 's#`id -u` -ne 0#`id -u` -ne `id -u`#g' make.sh.org > make.sh
 chmod 755 make.sh
+./make.sh \
+	SMP=1
+mv fglrx.o fglrx-smp.o
+./make.sh clean
 ./make.sh
 cd ../../../../panel_src
 
@@ -91,9 +110,10 @@ cd ../../../../panel_src
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
-	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc/
 
-install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
+install lib/modules/fglrx/build_mod/fglrx.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+install lib/modules/fglrx/build_mod/fglrx-smp.o $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
 
 install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} $RPM_BUILD_ROOT%{_bindir}
 install panel_src/{fireglcontrol.qt3.gcc3.3.1,fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
@@ -114,6 +134,12 @@ rm -rf $RPM_BUILD_ROOT
 %postun -n kernel-video-firegl
 /sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 
+%post	-n kernel-smp-video-firegl
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver}smp }%{_kernel_ver}smp
+
+%postun -n kernel-smp-video-firegl
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver}smp }%{_kernel_ver}smp
+
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
@@ -126,3 +152,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -n kernel-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.o*
+
+%files -n kernel-smp-video-firegl
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}smp/misc/*.o*
