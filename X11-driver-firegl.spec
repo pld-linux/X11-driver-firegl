@@ -8,32 +8,28 @@
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		XFree86-driver-firegl
-Version:	3.2.0
-Release:	1
+Version:	3.2.5
+Release:	0.1
 License:	ATI Binary
 Vendor:		ATI
 Group:		X11/XFree86
-#URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
-#Source0:	http://pdownload.mii.instacontent.net/ati/drivers/fglrx-glc22-4.2.0-%{version}.i586.rpm
-URL:		http://www.schneider-digital.de/html/body_download_ati.html
-Source0:	http://www.schneider-digital.de/download/ati/glx1_linux_X4.3.zip
-# Source0-md5:	09142a7f016e76739b86e70d8e624d77
+URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
+Source0:	http://www2.ati.com/drivers/firegl/fglrx-glc22-4.3.0-3.2.5.i586.rpm
+# Source0-md5:	ca6afde39dd145c5bdcece5d32c4c172
 Patch0:		firegl-panel.patch
 BuildRequires:	cpio
-%{!?_without_dist_kernel:BuildRequires:	kernel-headers >= 2.2.0 }
+%{!?_without_dist_kernel:BuildRequires:         kernel-headers >= 2.2.0 }
 BuildRequires:	rpm-utils
-BuildRequires:	rpmbuild(macros) >= 1.118
-BuildRequires:	unzip
 Requires:	XFree86-Xserver
-Requires:	XFree86-libs >= 4.2.0
-Requires:	XFree86-modules >= 4.2.0
+Requires:	XFree86-libs >= 4.3.0
+Requires:	XFree86-modules >= 4.3.0
 Requires:	kernel-video-firegl = %{version}
 Provides:	XFree86-OpenGL-core
-Conflicts:	XFree86-OpenGL-devel <= 4.2.0-3
+Obsoletes:	Mesa
+Obsoletes:	XFree86-OpenGL-libGL
+Provides:	XFree86-OpenGL-libGL
 ExclusiveArch:	i586 i686 athlon
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Obsoletes:	Mesa
-Obsoletes:	XFree86-OpenGL-core
 
 %define		_noautoreqdep	libGL.so.1.2
 
@@ -70,9 +66,7 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
-unzip %{SOURCE0}
-mv X4.3.0-%{version}-3/* .
-rpm2cpio fglrx-glc22-4.3.0-%{version}.i586.rpm | cpio -i -d
+rpm2cpio %{SOURCE0} | cpio -i -d
 bzip2 -d -v usr/X11R6/bin/*.bz2
 mkdir panel_src
 tar -xzf usr/src/fglrx_panel_sources.tgz -C panel_src
@@ -90,18 +84,17 @@ cd ../../../../panel_src
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
-	$RPM_BUILD_ROOT{/lib/modules/%{_kernel_ver}/misc/,/usr/lib}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions}
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
 install lib/modules/fglrx/build_mod/fglrx.o		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/
 
 install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} $RPM_BUILD_ROOT%{_bindir}
-install panel_src/{fireglcontrol.qt3.gcc3.3,fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
+install panel_src/{fireglcontrol.qt3.gcc3.3.1,fireglcontrol} $RPM_BUILD_ROOT%{_bindir}
 cp -r usr/X11R6/lib/* $RPM_BUILD_ROOT%{_libdir}/
 
 cd $RPM_BUILD_ROOT%{_libdir}
 ln -s libGL.so.* libGL.so
-ln -s %{_libdir}/libGL.so $RPM_BUILD_ROOT/usr/lib/libGL.so
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -110,19 +103,19 @@ rm -rf $RPM_BUILD_ROOT
 %postun	-p /sbin/ldconfig
 
 %post	-n kernel-video-firegl
-%depmod %{_kernel_ver}
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 
 %postun -n kernel-video-firegl
-%depmod %{_kernel_ver}
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) /usr/lib/lib*.so*
 %attr(755,root,root) %{_libdir}/lib*.so*
 %attr(755,root,root) %{_libdir}/modules/*/*.so
 %attr(755,root,root) %{_libdir}/modules/*/*.o
 %attr(644,root,root) %{_libdir}/modules/*/*.a
+%attr(755,root,root) /usr/X11R6/lib/libfglrx_gamma.a
 
 %files -n kernel-video-firegl
 %defattr(644,root,root,755)
