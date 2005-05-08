@@ -130,6 +130,7 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch1 -p1
 %patch2 -p1
 %{?with_dist_kernel:%patch3 -p1}
+%patch4 -p1
 
 %build
 %if %{with kernel}
