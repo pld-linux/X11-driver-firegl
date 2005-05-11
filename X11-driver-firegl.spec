@@ -18,7 +18,7 @@
 %else
 %define		need_x86	0%{?with_incall:1}
 %endif
-%ifarch amd64
+%ifarch %{x8664}
 %define		need_amd64	1
 %else
 %define		need_amd64	0%{?with_incall:1}
@@ -49,7 +49,7 @@ Patch4:		%{name}-viak8t.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
-BuildRequires:	rpmbuild(macros) >= 1.153
+BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_userspace:BuildRequires:	qt-devel}
 #BuildRequires:	X11-devel >= %{_min_x11}	# disabled for now
 Requires:	X11-OpenGL-core >= %{_min_x11}
