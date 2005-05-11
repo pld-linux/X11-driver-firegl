@@ -63,7 +63,7 @@ Obsoletes:	Mesa
 Obsoletes:	X11-OpenGL-libGL
 Obsoletes:	XFree86-OpenGL-libGL
 Obsoletes:	XFree86-driver-firegl
-ExclusiveArch:	i586 i686 athlon pentium3 pentium4 amd64
+ExclusiveArch:	i586 i686 athlon pentium3 pentium4 %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1
@@ -118,7 +118,7 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
-%ifarch amd64
+%ifarch %{x8664}
 rpm2cpio %{SOURCE1} | cpio -i -d
 %else
 rpm2cpio %{SOURCE0} | cpio -i -d
