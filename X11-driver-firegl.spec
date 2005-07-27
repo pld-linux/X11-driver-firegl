@@ -45,6 +45,10 @@ Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
+# needed to compile with linux kernel 2.6.12 or newer
+# NOTE: You have to uncommented these in %prep (I thinks these may brake build on < 2.6.12)
+Patch4:		%{name}-pci_name.patch
+Patch5:		%{name}-inter_module_get.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
@@ -129,6 +133,8 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch1 -p1
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
+#%patch4 -p1
+#%patch5 -p1
 
 %build
 %if %{with kernel}
