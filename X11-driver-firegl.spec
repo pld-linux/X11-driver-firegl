@@ -46,7 +46,7 @@ Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
 # needed to compile with linux kernel 2.6.12 or newer
-# NOTE: You have to uncommented these in %%prep (I thinks these may brake build on < 2.6.12)
+# NOTE: You have to uncomment these in %%prep (I think these may break build on < 2.6.12)
 Patch4:		%{name}-pci_name.patch
 Patch5:		%{name}-inter_module_get.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
