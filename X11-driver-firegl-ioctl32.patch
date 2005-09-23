@@ -1,0 +1,14 @@
+--- X11-driver-firegl-8.16.20/lib/modules/fglrx/build_mod/firegl_public.c.orig	2005-09-23 23:09:33.000000000 +0200
++++ X11-driver-firegl-8.16.20/lib/modules/fglrx/build_mod/firegl_public.c	2005-09-23 23:12:55.000000000 +0200
+@@ -121,7 +121,11 @@
+ #endif
+ 
+ #ifdef __x86_64__
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,12)
++#include "asm/ioctl.h"
++#else
+ #include "asm/ioctl32.h"
++#endif
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,2)
+ #include "linux/syscalls.h"
+ #endif
