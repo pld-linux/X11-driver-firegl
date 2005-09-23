@@ -45,6 +45,7 @@ Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
+Patch4:		%{name}-ioctl32.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.7}
@@ -129,6 +130,7 @@ tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch1 -p1
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
+%patch4 -p1
 
 %build
 %if %{with kernel}
