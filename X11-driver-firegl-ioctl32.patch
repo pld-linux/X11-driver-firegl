@@ -2,17 +2,6 @@ http://ati.cchtml.com/show_bug.cgi?id=211
 
 --- X11-driver-firegl-8.16.20/lib/modules/fglrx/build_mod/firegl_public.c.orig	2005-11-02 20:29:43.535048712 -0800
 +++ X11-driver-firegl-8.16.20/lib/modules/fglrx/build_mod/firegl_public.c	2005-11-02 20:27:19.013019400 -0800
-@@ -121,9 +121,8 @@
- #endif
- 
- #ifdef __x86_64__
-+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,12)
- #include "asm/ioctl32.h"
--#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,2)
--#include "linux/syscalls.h"
- #endif
- #endif
- 
 @@ -191,6 +190,16 @@ _syscall3( int, modify_ldt, int, func, v
  // ============================================================
  /* globals */
@@ -43,7 +32,7 @@ http://ati.cchtml.com/show_bug.cgi?id=211
  int ATI_API_CALL __ke_verify_area(int type, const void * addr, unsigned long size)
  {
 -    return verify_area(type, addr, size);
-+    return access_ok(type, addr, size);
++    return (access_ok(type, addr, size) ? 0 : -EFAULT);
  }
  
  int ATI_API_CALL __ke_get_pci_device_info(__ke_pci_dev_t* dev, __ke_pci_device_info_t *pinfo)
