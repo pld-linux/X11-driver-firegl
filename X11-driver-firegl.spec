@@ -28,7 +28,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.19.10
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
@@ -191,7 +191,7 @@ cd -
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
 	$RPM_BUILD_ROOT/usr/{%{_lib},include/GL}
 
-install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo} \
+install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo,aticonfig} \
 	$RPM_BUILD_ROOT%{_bindir}
 install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
 	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
@@ -232,6 +232,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libGL.so.*.*
 %attr(755,root,root) %{_libdir}/libGL.so
 %attr(755,root,root) %{_libdir}/libfglrx_gamma.so.*.*
+%attr(755,root,root) %{_libdir}/libfglrx_pp.so.*.*
 # Linux OpenGL ABI compatibility symlinks
 %attr(755,root,root) /usr/%{_lib}/libGL.so.1
 %attr(755,root,root) /usr/%{_lib}/libGL.so
