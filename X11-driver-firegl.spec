@@ -27,25 +27,25 @@
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
-Version:	8.19.10
-%define		_rel	0.2
+Version:	8.20.8
+%define		_rel	0.1
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
 Group:		X11/XFree86
 %if %{need_x86}
-Source0:	fglrx_6_8_0-%{version}-1.i386.rpm
-# Source0-md5:	11fc6c7347ae1751774a34ab23553f4b
+Source0:	http://dlmdownloads.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
+# Source0-md5:	bec227dc16abed4b84754137808b225c
 %endif
 %if %{need_amd64}
-Source1:	fglrx64_6_8_0-%{version}-1.x86_64.rpm
-# Source1-md5:	8eb9330e6ce651d2ad4ac44005cbea07
+Source1:	http://dlmdownloads.ati.com/drivers/linux/64bit/fglrx64_6_8_0-%{version}-1.x86_64.rpm
+# Source1-md5:	5aca1f5d51aeb5f713b1127ec103f80b
 %endif
+Source2:	%{name}-fglrx_pp_proto.h
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
-Patch4:		%{name}-ioctl32.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.14}
@@ -125,14 +125,12 @@ rpm2cpio %{SOURCE0} | cpio -i -d
 %endif
 install -d panel_src
 tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
+cp %{SOURCE2} panel_src/fglrx_pp_proto.h
 
 %patch0 -p1
 %patch1 -p1
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
-%ifarch %{x8664}
-%patch4 -p1
-%endif
 
 %build
 %if %{with kernel}
@@ -245,10 +243,12 @@ rm -rf $RPM_BUILD_ROOT
 # -devel
 #%attr(755,root,root) %{_libdir}/libfglrx_gamma.so
 #%{_includedir}/X11/include/libfglrx_gamma.h
+#/usr/include/GL/glATI.h
 #/usr/include/GL/glxATI.h
 
 # -static
 #%{_libdir}/libfglrx_gamma.a
+#%{_libdir}/libfglrx_pp.a
 %endif
 
 %if %{with kernel}
