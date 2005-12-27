@@ -7,7 +7,8 @@
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
 
-%define		_min_x11	6.8.0
+%define		_min_eq_x11	6.8.0
+%define		_max_x11	6.9.0
 
 %if %{without kernel}
 %undefine with_dist_kernel
@@ -28,7 +29,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.20.8
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
@@ -51,12 +52,14 @@ BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.14}
 BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_userspace:BuildRequires:	qt-devel}
-#BuildRequires:	X11-devel >= %{_min_x11}	# disabled for now
-Requires:	X11-OpenGL-core >= %{_min_x11}
+#BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
+Requires:	X11-OpenGL-core >= %{_min_eq_x11}
 Requires:	X11-Xserver
 %{?with_kernel:Requires:	X11-driver-firegl(kernel)}
-Requires:	X11-libs >= %{_min_x11}
-Requires:	X11-modules >= %{_min_x11}
+Requires:	X11-libs >= %{_min_eq_x11}
+Requires:	X11-libs < %{_max_x11}
+Requires:	X11-modules >= %{_min_eq_x11}
+Requires:	X11-modules < %{_max_x11}
 Provides:	X11-OpenGL-libGL
 Provides:	XFree86-OpenGL-libGL
 Obsoletes:	Mesa
