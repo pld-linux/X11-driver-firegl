@@ -15,6 +15,15 @@
  endif
  
  ifeq ($(QT_VER),0)
+@@ -138,7 +138,7 @@
+ # for *.c
+ CINCDIR = -I/usr/X11R6/include -I. -I./include_dummy
+ CDEFINES = $(DEFINES)
+-ifeq ($(DEBUG),0)
++ifneq ($(DEBUG),0)
+ CDEBFLAGS = -g
+ endif
+ CFLAGS = $(CDEBFLAGS) -O2 -fno-strength-reduce -funsigned-char $(CDEFINES)
 @@ -145,7 +145,7 @@
  LFLAGS = $(CDEBFLAGS) -L/usr/X11R6/$(LIB_DIR) -lXaw -lXmu -lXt -lXext -lX11
  
