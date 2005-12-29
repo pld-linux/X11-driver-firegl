@@ -167,6 +167,8 @@ cd -
 
 %if %{with userspace}
 %{__make} -C panel_src \
+	C="%{__cc}" \
+	CC="%{__cxx}" \
 	CCFLAGS="%{rpmcflags} -DFGLRX_USE_XEXTENSIONS" \
 	MK_QTDIR=/usr \
 	LIBQT_DYN=qt-mt
