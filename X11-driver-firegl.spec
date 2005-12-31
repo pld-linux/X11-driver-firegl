@@ -1,8 +1,5 @@
 #
 # Conditional build:
-#
-# TODO: fix Source0 and Source1
-#
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	smp		# don't build SMP module
@@ -12,7 +9,7 @@
 
 %define		_min_eq_x11	1:6.9.0
 %define		_max_x11	1:7.0.0
-%define		arch_sufix	x690
+%define		x11ver		x690
 
 %if %{without kernel}
 %undefine with_dist_kernel
@@ -28,13 +25,14 @@
 %define		arch_sufix	_64a
 %else
 %define		need_amd64	0%{?with_incall:1}
+%define		arch_sufix	""
 %endif
 
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.20.8
-%define		_rel	1.1
+%define		_rel	2
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
@@ -44,7 +42,7 @@ Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{versio
 # Source0-md5:	d3cd0788936d57c2b6734449c66987f8
 %endif
 %if %{need_amd64}
-Source1:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-x86_64.run
+Source1:	http://dlmdownloads.ati.com/drivers/linux/64bit/ati-driver-installer-%{version}-x86_64.run
 # Source1-md5:	1ffc8dfe93db24fa18f3dd387e20bbcd
 %endif
 Source2:	%{name}-fglrx_pp_proto.h
@@ -133,7 +131,7 @@ sh %{SOURCE1} --extract .
 sh %{SOURCE0} --extract .
 %endif
 
-cp -a %{arch_sufix}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
+cp %{x11ver}%{arch_sufix}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
 
 install -d panel_src
 tar -xzf common/usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
@@ -146,8 +144,8 @@ cd common
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
-cp -r %{arch_sufix}%{_prefix}/%{_lib}/* common%{_prefix}/%{_lib}
-cp -r %{arch_sufix}%{_bindir}/* common%{_bindir}
+cp -r %{x11ver}%{arch_sufix}%{_prefix}/%{_lib}/* common%{_prefix}/%{_lib}
+cp -r %{x11ver}%{arch_sufix}%{_bindir}/* common%{_bindir}
 
 %build
 %if %{with kernel}
