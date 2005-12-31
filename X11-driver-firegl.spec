@@ -1,5 +1,8 @@
 #
 # Conditional build:
+#
+# TODO: fix Source0 and Source1
+#
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	smp		# don't build SMP module
@@ -7,8 +10,9 @@
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
 
-%define		_min_eq_x11	6.8.0
-%define		_max_x11	6.9.0
+%define		_min_eq_x11	1:6.9.0
+%define		_max_x11	1:7.0.0
+%define		arch_sufix	x690
 
 %if %{without kernel}
 %undefine with_dist_kernel
@@ -21,6 +25,7 @@
 %endif
 %ifarch %{x8664}
 %define		need_amd64	1
+%define		arch_sufix	_64a
 %else
 %define		need_amd64	0%{?with_incall:1}
 %endif
@@ -29,18 +34,18 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.20.8
-%define		_rel	1
+%define		_rel	1.1
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
-Group:		X11/XFree86
+Group:		X11
 %if %{need_x86}
-Source0:	http://dlmdownloads.ati.com/drivers/linux/fglrx_6_8_0-%{version}-1.i386.rpm
-# Source0-md5:	bec227dc16abed4b84754137808b225c
+Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-i386.run
+# Source0-md5:	d3cd0788936d57c2b6734449c66987f8
 %endif
 %if %{need_amd64}
-Source1:	http://dlmdownloads.ati.com/drivers/linux/64bit/fglrx64_6_8_0-%{version}-1.x86_64.rpm
-# Source1-md5:	5aca1f5d51aeb5f713b1127ec103f80b
+Source1:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-x86_64.run
+# Source1-md5:	1ffc8dfe93db24fa18f3dd387e20bbcd
 %endif
 Source2:	%{name}-fglrx_pp_proto.h
 Patch0:		firegl-panel.patch
@@ -48,18 +53,18 @@ Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
+#BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 BuildRequires:	cpio
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.14}
-BuildRequires:	rpmbuild(macros) >= 1.213
 %{?with_userspace:BuildRequires:	qt-devel}
-#BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
+BuildRequires:	rpmbuild(macros) >= 1.213
 Requires:	X11-OpenGL-core >= %{_min_eq_x11}
 Requires:	X11-Xserver
 %{?with_kernel:Requires:	X11-driver-firegl(kernel)}
-Requires:	X11-libs >= %{_min_eq_x11}
 Requires:	X11-libs < %{_max_x11}
-Requires:	X11-modules >= %{_min_eq_x11}
+Requires:	X11-libs >= %{_min_eq_x11}
 Requires:	X11-modules < %{_max_x11}
+Requires:	X11-modules >= %{_min_eq_x11}
 Provides:	X11-OpenGL-libGL
 Provides:	XFree86-OpenGL-libGL
 Obsoletes:	Mesa
@@ -121,23 +126,32 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
-%ifarch %{x8664}
-rpm2cpio %{SOURCE1} | cpio -i -d
-%else
-rpm2cpio %{SOURCE0} | cpio -i -d
-%endif
-install -d panel_src
-tar -xzf usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
-cp %{SOURCE2} panel_src/fglrx_pp_proto.h
 
+%ifarch %{x8664}
+sh %{SOURCE1} --extract .
+%else
+sh %{SOURCE0} --extract .
+%endif
+
+cp -a %{arch_sufix}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
+
+install -d panel_src
+tar -xzf common/usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
+cp %{SOURCE2} panel_src/fglrx_pp_proto.h
 %patch0 -p1
 %patch1 -p1
+cd common
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
+cd -
+
+install -d common%{_prefix}/{%{_lib},bin}
+cp -r %{arch_sufix}%{_prefix}/%{_lib}/* common%{_prefix}/%{_lib}
+cp -r %{arch_sufix}%{_bindir}/* common%{_bindir}
 
 %build
 %if %{with kernel}
-cd lib/modules/fglrx/build_mod
+cd common/lib/modules/fglrx/build_mod
 cp -f 2.6.x/Makefile .
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
@@ -178,7 +192,7 @@ cd -
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
-cd lib/modules/fglrx/build_mod
+cd common/lib/modules/fglrx/build_mod
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 
 install fglrx-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
@@ -194,11 +208,11 @@ cd -
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_libdir},%{_includedir}/X11/extensions} \
 	$RPM_BUILD_ROOT/usr/{%{_lib},include/GL}
 
-install usr/X11R6/bin/{fgl_glxgears,fglrxconfig,fglrxinfo,aticonfig} \
+install common%{_bindir}/{fgl_glxgears,fglrxconfig,fglrxinfo,aticonfig} \
 	$RPM_BUILD_ROOT%{_bindir}
 install panel_src/fireglcontrol.qt3.gcc%(gcc -dumpversion) \
 	$RPM_BUILD_ROOT%{_bindir}/fireglcontrol
-cp -r usr/X11R6/%{_lib}/* $RPM_BUILD_ROOT%{_libdir}
+cp -r common%{_prefix}/%{_lib}/* $RPM_BUILD_ROOT%{_libdir}
 
 ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
 
@@ -206,8 +220,8 @@ ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
 ln -sf %{_libdir}/libGL.so.1 $RPM_BUILD_ROOT/usr/%{_lib}/libGL.so.1
 ln -sf %{_libdir}/libGL.so $RPM_BUILD_ROOT/usr/%{_lib}/libGL.so
 
-install usr/include/GL/*.h $RPM_BUILD_ROOT/usr/include/GL
-install usr/X11R6/include/X11/extensions/*.h $RPM_BUILD_ROOT%{_includedir}/X11/extensions
+install common/usr/include/GL/*.h $RPM_BUILD_ROOT/usr/include/GL
+install common%{_includedir}/X11/extensions/*.h $RPM_BUILD_ROOT%{_includedir}/X11/extensions
 %endif
 
 %clean
@@ -242,8 +256,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %attr(755,root,root) %{_libdir}/modules/dri/atiogl_a_dri.so
 %attr(755,root,root) %{_libdir}/modules/dri/fglrx_dri.so
-%attr(755,root,root) %{_libdir}/modules/drivers/fglrx_drv.o
-%{_libdir}/modules/linux/libfglrxdrm.a
+%attr(755,root,root) %{_libdir}/modules/drivers/fglrx_drv.so
+%attr(755,root,root) %{_libdir}/modules/linux/libfglrxdrm.so
+%doc ATI_LICENSE.TXT common%{_docdir}/fglrx/*.html common%{_docdir}/fglrx/articles common%{_docdir}/fglrx/release-notes common%{_docdir}/fglrx/user-manual
 
 # -devel
 #%attr(755,root,root) %{_libdir}/libfglrx_gamma.so
