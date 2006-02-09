@@ -38,11 +38,11 @@ Vendor:		ATI
 Group:		X11
 %if %{need_x86}
 Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-i386.run
-# Source0-md5:	x
+# Source0-md5:	283eb8b53dbd0887fff3277d4bf0b3f9
 %endif
 %if %{need_amd64}
 Source1:	http://dlmdownloads.ati.com/drivers/linux/64bit/ati-driver-installer-%{version}-x86_64.run
-# Source1-md5:	x
+# Source1-md5:	a24571ecb45b2a26092ef103d8eecefd
 %endif
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
