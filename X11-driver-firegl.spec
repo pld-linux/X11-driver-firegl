@@ -31,7 +31,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.23.7
-%define		_rel	2
+%define		_rel	3
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Vendor:		ATI
@@ -48,6 +48,7 @@ Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
+Patch4:		%{name}-force-define-AGP.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 BuildRequires:	cpio
@@ -138,6 +139,7 @@ tar -xzf common/usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 cd common
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
+%patch4 -p2
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
