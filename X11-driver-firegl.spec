@@ -27,13 +27,14 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	2
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.23.7
+%define		_rel	3
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
+Vendor:		ATI
 Group:		X11
 %if %{need_x86}
 Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-i386.run
@@ -47,9 +48,11 @@ Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
+Patch4:		%{name}-force-define-AGP.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.14}
+BuildRequires:	cpio
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 2.6.14}
 %{?with_userspace:BuildRequires:	qt-devel}
 BuildRequires:	rpmbuild(macros) >= 1.213
 Requires:	X11-OpenGL-core >= %{_min_eq_x11}
@@ -89,6 +92,7 @@ Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
+Vendor:		ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
@@ -105,6 +109,7 @@ Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
+Vendor:		ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
@@ -134,6 +139,7 @@ tar -xzf common/usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 cd common
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
+%patch4 -p2
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
@@ -150,11 +156,11 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 		exit 1
 	fi
-		install -d o/include/linux
-		ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-		ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-		ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-		%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+        install -d o/include/linux
+        ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+        ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+        %{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
 		M=$PWD O=$PWD/o \
