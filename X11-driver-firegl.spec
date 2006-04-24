@@ -143,7 +143,9 @@ cd common
 %patch3 -p1
 %patch4 -p2
 %patch5 -p2
+%ifarch %{x8664}
 %patch6 -p2
+%endif
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
