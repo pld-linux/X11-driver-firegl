@@ -51,7 +51,7 @@ Patch3:		%{name}-viak8t.patch
 Patch4:		%{name}-force-define-AGP.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
-%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.14}
+%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
 %{?with_userspace:BuildRequires:	qt-devel}
 BuildRequires:	rpmbuild(macros) >= 1.213
 Requires:	X11-OpenGL-core >= %{_min_eq_x11}
@@ -86,7 +86,7 @@ graficznych akceleratorów FireGL 8700/8800, E1, Z1/X1. Pakiet
 dostarcza sterowniki obs³uguj±ce wy¶wietlanie 2D oraz sprzêtowo
 akcelerowany OpenGL.
 
-%package -n kernel-video-firegl
+%package -n kernel%{_alt_kernel}-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -96,13 +96,13 @@ Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
-%description -n kernel-video-firegl
+%description -n kernel%{_alt_kernel}-video-firegl
 ATI kernel module for FireGL support.
 
-%description -n kernel-video-firegl -l pl
+%description -n kernel%{_alt_kernel}-video-firegl -l pl
 Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
-%package -n kernel-smp-video-firegl
+%package -n kernel%{_alt_kernel}-smp-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -112,10 +112,10 @@ Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
-%description -n kernel-smp-video-firegl
+%description -n kernel%{_alt_kernel}-smp-video-firegl
 ATI kernel module for FireGL support.
 
-%description -n kernel-smp-video-firegl -l pl
+%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl
 Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
@@ -221,16 +221,16 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
-%post	-n kernel-video-firegl
+%post	-n kernel%{_alt_kernel}-video-firegl
 %depmod %{_kernel_ver}
 
-%postun -n kernel-video-firegl
+%postun -n kernel%{_alt_kernel}-video-firegl
 %depmod %{_kernel_ver}
 
-%post	-n kernel-smp-video-firegl
+%post	-n kernel%{_alt_kernel}-smp-video-firegl
 %depmod %{_kernel_ver}smp
 
-%postun -n kernel-smp-video-firegl
+%postun -n kernel%{_alt_kernel}-smp-video-firegl
 %depmod %{_kernel_ver}smp
 
 %if %{with userspace}
@@ -264,12 +264,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%files -n kernel-video-firegl
+%files -n kernel%{_alt_kernel}-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
 
 %if %{with smp} && %{with dist_kernel}
-%files -n kernel-smp-video-firegl
+%files -n kernel%{_alt_kernel}-smp-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/*.ko*
 %endif
