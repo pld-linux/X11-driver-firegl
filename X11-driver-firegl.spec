@@ -16,13 +16,9 @@
 %endif
 
 %ifarch %{ix86}
-%define		need_x86	1
-%define		need_amd64	0%{?with_incall:1}
 %define		arch_sufix	""
 %define		arch_dir	x86
 %else
-%define		need_x86	0%{?with_incall:1}
-%define		need_amd64	1
 %define		arch_sufix	_64a
 %define		arch_dir	x86_64
 %endif
@@ -31,19 +27,12 @@
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
-Version:	8.27.10
-%define		_rel	1
+Version:	8.28.8
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Group:		X11
-%if %{need_x86}
-Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.run
-# Source0-md5:	72f69477c66d8b2d1a580c7885afa892
-%endif
-%if %{need_amd64}
-Source1:	http://dlmdownloads.ati.com/drivers/linux/64bit/ati-driver-installer-%{version}-x86_64.run
-# Source1-md5:	4cc78c0fc864fd2b3205cee5f866f3d7
-%endif
+Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}.run
+# Source0-md5:	58189d7cc3625e399b1a434df893100f
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
@@ -121,11 +110,7 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 %prep
 %setup -q -c -T
 
-%ifarch %{x8664}
-sh %{SOURCE1} --extract .
-%else
 sh %{SOURCE0} --extract .
-%endif
 
 cp arch/%{arch_dir}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
 
