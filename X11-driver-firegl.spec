@@ -23,7 +23,7 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	0.1
+%define		_rel	0.2
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
@@ -115,7 +115,7 @@ sh %{SOURCE0} --extract .
 cp arch/%{arch_dir}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
 
 install -d panel_src
-tar -xzf common/usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
+tar -xzf common/usr/src/ati/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
 %patch1 -p1
 cd common
