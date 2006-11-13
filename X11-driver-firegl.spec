@@ -11,7 +11,7 @@
 %define		_max_x11	1:7.0.0
 %define		x11ver		x690
 
-%if %{without kernel}
+%if !%{with kernel}
 %undefine with_dist_kernel
 %endif
 
