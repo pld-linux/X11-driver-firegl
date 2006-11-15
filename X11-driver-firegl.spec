@@ -59,7 +59,7 @@ Obsoletes:	XFree86-driver-firegl
 ExclusiveArch:	i586 i686 athlon pentium3 pentium4 %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_ccver	%(rpm -q --qf "%{VERSION}" gcc | sed 's/\..*//')
+%define		_ccver	%(rpm -q --qf "%{VERSION}" gcc | sed 's/\\..*//')
 
 %define		_noautoreqdep	libGL.so.1
 
