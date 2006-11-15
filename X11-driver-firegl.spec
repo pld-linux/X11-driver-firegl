@@ -59,6 +59,8 @@ Obsoletes:	XFree86-driver-firegl
 ExclusiveArch:	i586 i686 athlon pentium3 pentium4 %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_ccver	%(rpm -q --qf "%{VERSION}" gcc | sed 's/\..*//')
+
 %define		_noautoreqdep	libGL.so.1
 
 %define		_prefix		/usr/X11R6
@@ -134,7 +136,7 @@ cp -r arch/%{arch_dir}%{_bindir}/* common%{_bindir}
 %if %{with kernel}
 cd common/lib/modules/fglrx/build_mod
 cp -f 2.6.x/Makefile .
-%build_kernel_modules -m fglrx
+%build_kernel_modules -m fglrx GCC_VER_MAJ=%{_ccver}
 cd -
 %endif
 
