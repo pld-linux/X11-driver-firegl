@@ -38,6 +38,7 @@ Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
 Patch4:		%{name}-force-define-AGP.patch
+Patch5:		%{name}-utsrelease.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
@@ -123,6 +124,7 @@ cd common
 %patch3 -p1
 %patch4 -p2
 cd -
+%patch5 -p1
 
 install -d common%{_prefix}/{%{_lib},bin}
 cp -r %{x11ver}%{arch_sufix}%{_prefix}/%{_lib}/* common%{_prefix}/%{_lib}
