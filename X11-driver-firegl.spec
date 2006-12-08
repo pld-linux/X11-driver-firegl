@@ -6,14 +6,19 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
-
-%define		_min_eq_x11	1:6.9.0
-%define		_max_x11	1:7.0.0
-%define		x11ver		x690
-
+%bcond_with	grsec_kernel	# build for kernel-grsecurity
+#
 %if !%{with kernel}
 %undefine with_dist_kernel
 %endif
+#
+%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
+%define	alt_kernel	grsecurity
+%endif
+#
+%define		_min_eq_x11	1:6.9.0
+%define		_max_x11	1:7.0.0
+%define		x11ver		x690
 
 %ifarch %{ix86}
 %define		arch_sufix	""
@@ -23,7 +28,7 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	0.1
+%define		_rel	1
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
