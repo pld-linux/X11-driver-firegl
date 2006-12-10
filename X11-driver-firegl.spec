@@ -23,7 +23,7 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	1
+%define		_rel	2
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
@@ -39,6 +39,7 @@ Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
 Patch4:		%{name}-force-define-AGP.patch
 Patch5:		%{name}-utsrelease.patch
+Patch6:		%{name}-VM_SHM-fix.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
@@ -127,6 +128,7 @@ cd common
 %patch4 -p2
 cd -
 %patch5 -p1
+%patch6 -p1
 
 install -d common%{_prefix}/{%{_lib},bin}
 cp -r %{x11ver}%{arch_sufix}%{_prefix}/%{_lib}/* common%{_prefix}/%{_lib}
@@ -205,6 +207,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libfglrx_dm.so.*.*
 %attr(755,root,root) %{_libdir}/libfglrx_gamma.so.*.*
 %attr(755,root,root) %{_libdir}/libfglrx_pp.so.*.*
+%attr(755,root,root) %{_libdir}/libfglrx_tvout.so.*.*
 # Linux OpenGL ABI compatibility symlinks
 %attr(755,root,root) /usr/%{_lib}/libGL.so.1
 %attr(755,root,root) /usr/%{_lib}/libGL.so
