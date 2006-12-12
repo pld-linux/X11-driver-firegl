@@ -6,24 +6,23 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
-%bcond_with	grsec_kernel	# build for kernel-grsecurity
-#
-%if !%{with kernel}
-%undefine with_dist_kernel
-%endif
-#
-%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
-%define	alt_kernel	grsecurity
-%endif
-#
+
 %define		_min_eq_x11	1:6.9.0
 %define		_max_x11	1:7.0.0
 %define		x11ver		x690
 
+%if %{without kernel}
+%undefine with_dist_kernel
+%endif
+
 %ifarch %{ix86}
+%define		need_x86	1
+%define		need_amd64	0%{?with_incall:1}
 %define		arch_sufix	""
 %define		arch_dir	x86
 %else
+%define		need_x86	0%{?with_incall:1}
+%define		need_amd64	1
 %define		arch_sufix	_64a
 %define		arch_dir	x86_64
 %endif
@@ -32,22 +31,31 @@
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
-Version:	8.31.5
+Version:	8.25.18
+%define		_rel	2
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Group:		X11
-Source0:	http://www2.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.x86_64.run
-# Source0-md5:	2be14c0459373149b3fff49504713d98
+%if %{need_x86}
+Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.run
+# Source0-md5:	37ea9a8fedf514d3ebdb266d4cb6cd4a
+%endif
+%if %{need_amd64}
+Source1:	http://dlmdownloads.ati.com/drivers/linux/64bit/ati-driver-installer-%{version}-x86_64.run
+# Source1-md5:	875c80fc3ae5fc55b2a8f8c4a9437a35
+%endif
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
 Patch4:		%{name}-force-define-AGP.patch
-URL:		http://ati.amd.com/support/drivers/linux/linux-radeon.html
+Patch5:		%{name}-utsrelease.patch
+Patch6:		%{name}-VM_SHM-fix.patch
+URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
-%{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.14}
 %{?with_userspace:BuildRequires:	qt-devel}
-BuildRequires:	rpmbuild(macros) >= 1.330
+BuildRequires:	rpmbuild(macros) >= 1.213
 Requires:	X11-OpenGL-core >= %{_min_eq_x11}
 Requires:	X11-Xserver
 %{?with_kernel:Requires:	X11-driver-firegl(kernel)}
@@ -63,8 +71,6 @@ Obsoletes:	XFree86-OpenGL-libGL
 Obsoletes:	XFree86-driver-firegl
 ExclusiveArch:	i586 i686 athlon pentium3 pentium4 %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		_ccver	%(rpm -q --qf "%{VERSION}" gcc | sed 's/\\..*//')
 
 %define		_noautoreqdep	libGL.so.1
 
@@ -82,7 +88,7 @@ graficznych akceleratorów FireGL 8700/8800, E1, Z1/X1. Pakiet
 dostarcza sterowniki obs³uguj±ce wy¶wietlanie 2D oraz sprzêtowo
 akcelerowany OpenGL.
 
-%package -n kernel%{_alt_kernel}-video-firegl
+%package -n kernel-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -92,13 +98,13 @@ Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
-%description -n kernel%{_alt_kernel}-video-firegl
+%description -n kernel-video-firegl
 ATI kernel module for FireGL support.
 
-%description -n kernel%{_alt_kernel}-video-firegl -l pl
+%description -n kernel-video-firegl -l pl
 Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
-%package -n kernel%{_alt_kernel}-smp-video-firegl
+%package -n kernel-smp-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
@@ -108,21 +114,25 @@ Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
-%description -n kernel%{_alt_kernel}-smp-video-firegl
+%description -n kernel-smp-video-firegl
 ATI kernel module for FireGL support.
 
-%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl
+%description -n kernel-smp-video-firegl -l pl
 Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
 
+%ifarch %{x8664}
+sh %{SOURCE1} --extract .
+%else
 sh %{SOURCE0} --extract .
+%endif
 
 cp arch/%{arch_dir}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
 
 install -d panel_src
-tar -xzf common/usr/src/ati/fglrx_panel_sources.tgz -C panel_src
+tar -xzf common/usr/src/ATI/fglrx_panel_sources.tgz -C panel_src
 %patch0 -p1
 %patch1 -p1
 cd common
@@ -130,6 +140,10 @@ cd common
 %patch3 -p1
 %patch4 -p2
 cd -
+
+%patch5 -p1
+%patch6 -p1
+
 
 install -d common%{_prefix}/{%{_lib},bin}
 cp -r %{x11ver}%{arch_sufix}%{_prefix}/%{_lib}/* common%{_prefix}/%{_lib}
@@ -141,7 +155,24 @@ cp -r arch/%{arch_dir}%{_bindir}/* common%{_bindir}
 %if %{with kernel}
 cd common/lib/modules/fglrx/build_mod
 cp -f 2.6.x/Makefile .
-%build_kernel_modules -m fglrx GCC_VER_MAJ=%{_ccver}
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	install -d o/include/linux
+	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	mv fglrx{,-$cfg}.ko
+done
 cd -
 %endif
 
@@ -158,7 +189,16 @@ cd -
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with kernel}
-%install_kernel_modules -m common/lib/modules/fglrx/build_mod/fglrx -d misc
+cd common/lib/modules/fglrx/build_mod
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
+
+install fglrx-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/fglrx.ko
+%if %{with smp} && %{with dist_kernel}
+install fglrx-smp.ko \
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/fglrx.ko
+%endif
+cd -
 %endif
 
 %if %{with userspace}
@@ -187,16 +227,16 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun	-p /sbin/ldconfig
 
-%post	-n kernel%{_alt_kernel}-video-firegl
+%post	-n kernel-video-firegl
 %depmod %{_kernel_ver}
 
-%postun -n kernel%{_alt_kernel}-video-firegl
+%postun -n kernel-video-firegl
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-smp-video-firegl
+%post	-n kernel-smp-video-firegl
 %depmod %{_kernel_ver}smp
 
-%postun -n kernel%{_alt_kernel}-smp-video-firegl
+%postun -n kernel-smp-video-firegl
 %depmod %{_kernel_ver}smp
 
 %if %{with userspace}
@@ -230,12 +270,12 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%files -n kernel%{_alt_kernel}-video-firegl
+%files -n kernel-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
 
 %if %{with smp} && %{with dist_kernel}
-%files -n kernel%{_alt_kernel}-smp-video-firegl
+%files -n kernel-smp-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/*.ko*
 %endif
