@@ -1,0 +1,46 @@
+--- XFree86-driver-firegl-2.9.8/panel_src/Makefile.fix	Wed May  7 00:12:45 2003
++++ XFree86-driver-firegl-2.9.8/panel_src/Makefile	Wed May  7 00:17:42 2003
+@@ -87,12 +87,12 @@
+ $(error environment missing: MK_QTDIR=$(MK_QTDIR))
+ endif
+ 
+-ifeq ($(shell test -e $(MK_QTDIR)/include/qglobal.h$(colon) echo $$?),1)
++ifeq ($(shell test -e $(MK_QTDIR)/include/qt/qglobal.h$(colon) echo $$?),1)
+ $(error environment incomplete: MK_QTDIR=$(MK_QTDIR))
+ endif
+ 
+ ifeq ($(QT_VER),0)
+-QT_VER=$(shell grep QT_VERSION_STR $(MK_QTDIR)/include/qglobal.h | cut -d'"' -f2 | cut -d'.' -f1)
++QT_VER=$(shell grep QT_VERSION_STR $(MK_QTDIR)/include/qt/qglobal.h | cut -d'"' -f2 | cut -d'.' -f1)
+ endif
+ 
+ ifeq ($(QT_VER),0)
+@@ -138,7 +138,7 @@
+ # for *.c
+ CINCDIR = -I/usr/X11R6/include -I. -I./include_dummy
+ CDEFINES = $(DEFINES)
+-ifeq ($(DEBUG),0)
++ifneq ($(DEBUG),0)
+ CDEBFLAGS = -g
+ endif
+ CFLAGS = $(CDEBFLAGS) -O2 -fno-strength-reduce -funsigned-char $(CDEFINES)
+@@ -145,7 +145,7 @@
+ LFLAGS = $(CDEBFLAGS) -L/usr/X11R6/$(LIB_DIR) -lXaw -lXmu -lXt -lXext -lX11
+ 
+ # for *.cpp
+-CCINCDIR = -I$(MK_QTDIR)/include -I. -I./include_dummy
++CCINCDIR = -I$(MK_QTDIR)/include -I. -I./include_dummy -I/usr/include/qt
+ CCDEFINES = $(DEFINES)
+ ifneq ($(DEBUG),0)
+ CCDEBFLAGS = -ggdb
+--- XFree86-driver-firegl-2.9.8/panel_src/main.cpp.fix	Wed May  7 00:19:12 2003
++++ XFree86-driver-firegl-2.9.8/panel_src/main.cpp	Wed May  7 00:20:06 2003
+@@ -28,7 +28,7 @@
+ //    printf ( "%s\n", lpath.data() ) ;
+ //    printf ( "%s\n", lfile.data() ) ;
+ 
+-    QApplication::setStyle ( new QWindowsStyle ) ;
++    QApplication::setStyle ( "Windows" ) ;
+ 
+     QApplication a( argc, argv );
+ 

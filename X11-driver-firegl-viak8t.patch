@@ -1,0 +1,32 @@
+--- a/lib/modules/fglrx/build_mod/agpgart_be.c	2005-05-06 19:38:20.097954488 +0200
++++ b/lib/modules/fglrx/build_mod/agpgart_be.c	2005-05-06 18:33:55.722009576 +0200
+@@ -6185,6 +6185,18 @@
+         "Via",
+         "Apollo P4M266",
+         via_generic_setup },
++    { PCI_DEVICE_ID_VIA_8380_0,
++        PCI_VENDOR_ID_VIA,
++        AMD_8151,
++        "AMD",
++        "On-CPU GART",
++        amd_8151_setup },
++    { PCI_DEVICE_ID_VIA_8385_0,
++        PCI_VENDOR_ID_VIA,
++        AMD_8151,
++        "AMD",
++        "On-CPU GART",
++        amd_8151_setup },    
+     { 0,
+         PCI_VENDOR_ID_VIA,
+         VIA_GENERIC,
+--- a/lib/modules/fglrx/build_mod/agp.h	2005-05-06 19:38:19.671019392 +0200
++++ b/lib/modules/fglrx/build_mod/agp.h	2005-05-06 18:37:10.403413504 +0200
+@@ -202,6 +202,8 @@
+     #define SIS_GENERIC             _X(SIS_GENERIC)
+     #define AMD_GENERIC             _X(AMD_GENERIC)
+     #define AMD_IRONGATE            _X(AMD_IRONGATE)
++    #define PCI_DEVICE_ID_VIA_8380_0        0x0204
++    #define PCI_DEVICE_ID_VIA_8385_0        0x3188
+ //    #define AMD_IGD4                _X(AMD_IGD4)
+ //    #define AMD_IGD4_2P             _X(AMD_IGD4_2P)
+     #define AMD_761                 _X(AMD_761)
