@@ -30,7 +30,7 @@
 
 %define		_rel	1
 Summary:	Linux Drivers for ATI graphics accelerators
-Summary(pl.UTF-8):   Sterowniki do akceleratorów graficznych ATI
+Summary(pl.UTF-8):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.33.6
 Release:	%{_rel}
@@ -84,7 +84,7 @@ akcelerowany OpenGL.
 
 %package -n kernel%{_alt_kernel}-video-firegl
 Summary:	ATI kernel module for FireGL support
-Summary(pl.UTF-8):   Moduł jądra oferujący wsparcie dla ATI FireGL
+Summary(pl.UTF-8):	Moduł jądra oferujący wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Group:		Base/Kernel
@@ -100,7 +100,7 @@ Moduł jądra oferujący wsparcie dla ATI FireGL.
 
 %package -n kernel%{_alt_kernel}-smp-video-firegl
 Summary:	ATI kernel module for FireGL support
-Summary(pl.UTF-8):   Moduł jądra oferujący wsparcie dla ATI FireGL
+Summary(pl.UTF-8):	Moduł jądra oferujący wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Group:		Base/Kernel
