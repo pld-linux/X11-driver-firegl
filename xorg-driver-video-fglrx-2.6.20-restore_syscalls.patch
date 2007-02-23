@@ -1,9 +1,10 @@
---- xorg-driver-video-fglrx-8.33.6/common/lib/modules/fglrx/build_mod/firegl_public.c.orig	2007-01-09 12:26:33.000000000 +0100
-+++ xorg-driver-video-fglrx-8.33.6/common/lib/modules/fglrx/build_mod/firegl_public.c	2007-01-31 02:06:52.539021699 +0100
-@@ -194,6 +194,70 @@
+--- xorg-driver-video-fglrx-8.34.8/common/lib/modules/fglrx/build_mod/firegl_public.c.orig	2007-02-20 19:23:07.000000000 +0100
++++ xorg-driver-video-fglrx-8.34.8/common/lib/modules/fglrx/build_mod/firegl_public.c	2007-02-23 12:55:25.645523715 +0100
+@@ -200,6 +200,72 @@
  int errno;
  #endif // __ia64__
  
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,20)
 +#if defined(__i386__)
 +#define __syscall_return(type, res) \
 +do { \
@@ -66,6 +67,7 @@
 + "d" ((long)(arg3)) : __syscall_clobber); \
 +__syscall_return(type,__res); \
 +}
++#endif
 +#endif
 +
  // int mlock(const void *addr, size_t len);
