@@ -2,8 +2,6 @@
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
@@ -91,7 +89,7 @@ Summary(pl.UTF-8):	Moduł jądra oferujący wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel}
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
@@ -99,22 +97,6 @@ Provides:	X11-driver-firegl(kernel)
 ATI kernel module for FireGL support.
 
 %description -n kernel%{_alt_kernel}-video-firegl -l pl.UTF-8
-Moduł jądra oferujący wsparcie dla ATI FireGL.
-
-%package -n kernel%{_alt_kernel}-smp-video-firegl
-Summary:	ATI kernel module for FireGL support
-Summary(pl.UTF-8):	Moduł jądra oferujący wsparcie dla ATI FireGL
-Release:	%{_rel}@%{_kernel_ver_str}
-License:	ATI
-Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
-Requires(post,postun):	/sbin/depmod
-Provides:	X11-driver-firegl(kernel)
-
-%description -n kernel%{_alt_kernel}-smp-video-firegl
-ATI kernel module for FireGL support.
-
-%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl.UTF-8
 Moduł jądra oferujący wsparcie dla ATI FireGL.
 
 %prep
@@ -198,12 +180,6 @@ rm -rf $RPM_BUILD_ROOT
 %postun -n kernel%{_alt_kernel}-video-firegl
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-smp-video-firegl
-%depmod %{_kernel_ver}smp
-
-%postun -n kernel%{_alt_kernel}-smp-video-firegl
-%depmod %{_kernel_ver}smp
-
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
@@ -235,15 +211,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
-%endif
-
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel%{_alt_kernel}-smp-video-firegl
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/*.ko*
-%endif
 %endif
