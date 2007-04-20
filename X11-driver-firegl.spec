@@ -29,21 +29,21 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	3
+%define		_rel	1
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
-Version:	8.32.5
+Version:	8.36.5
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Group:		X11
 Source0:	http://www2.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.x86_64.run
-# Source0-md5:	ea5166083abbe2e28735e805dff78da1
+# Source0-md5:	bf056417ac6c57acdf5e5a6bb99a7dae
 Patch0:		firegl-panel.patch
 Patch1:		firegl-panel-ugliness.patch
 Patch2:		%{name}-kh.patch
 Patch3:		%{name}-viak8t.patch
-Patch4:		%{name}-force-define-AGP.patch
+# Patch4:		%{name}-force-define-AGP.patch
 URL:		http://ati.amd.com/support/drivers/linux/linux-radeon.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
@@ -129,7 +129,7 @@ tar -xzf common/usr/src/ati/fglrx_panel_sources.tgz -C panel_src
 cd common
 %{?with_dist_kernel:%patch2 -p1}
 %patch3 -p1
-%patch4 -p2
+# %patch4 -p2
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
@@ -209,14 +209,17 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libfglrx_dm.so.*.*
 %attr(755,root,root) %{_libdir}/libfglrx_gamma.so.*.*
 %attr(755,root,root) %{_libdir}/libfglrx_pp.so.*.*
+%attr(755,root,root) %{_libdir}/libfglrx_tvout.so.*.*
 # Linux OpenGL ABI compatibility symlinks
 %attr(755,root,root) /usr/%{_lib}/libGL.so.1
 %attr(755,root,root) /usr/%{_lib}/libGL.so
 
-%attr(755,root,root) %{_libdir}/modules/dri/atiogl_a_dri.so
+#%%attr(755,root,root) %{_libdir}/modules/dri/atiogl_a_dri.so
+%attr(755,root,root) %{_libdir}/modules/glesx.so
 %attr(755,root,root) %{_libdir}/modules/dri/fglrx_dri.so
 %attr(755,root,root) %{_libdir}/modules/drivers/fglrx_drv.so
 %attr(755,root,root) %{_libdir}/modules/linux/libfglrxdrm.so
+
 %doc ATI_LICENSE.TXT common%{_docdir}/fglrx/*.html common%{_docdir}/fglrx/articles common%{_docdir}/fglrx/release-notes common%{_docdir}/fglrx/user-manual
 
 # -devel
@@ -228,6 +231,7 @@ rm -rf $RPM_BUILD_ROOT
 # -static
 #%{_libdir}/libfglrx_gamma.a
 #%{_libdir}/libfglrx_pp.a
+#%{_libdir}/modules/esut.a
 %endif
 
 %if %{with kernel}
