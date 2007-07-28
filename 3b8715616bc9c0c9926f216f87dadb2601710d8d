@@ -1,0 +1,3 @@
+- up to 8.34.8
+- fix build with 2.6.20 kernels
+- allow to build smp only
