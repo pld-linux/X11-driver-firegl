@@ -1,0 +1,2 @@
+- up to 8.38.6
+- this rev features: aiglx (composite) germ; 7.2 cooperation; no need to patch agpgart; no panel (new catalyst app not packaged, it does not work for me)
