@@ -1,0 +1,2 @@
+- %{_alt_kernel} support
+- use %build_kernel_modules, %install_kernel_modules (not tested)
