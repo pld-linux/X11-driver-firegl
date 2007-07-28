@@ -1,0 +1,1 @@
+- don't use %{without ...}, it may not work after inverting bcond
