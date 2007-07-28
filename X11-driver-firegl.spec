@@ -1,4 +1,8 @@
 #
+# Intended to provide firegl support for newer than AC kernels
+# Tested on athlon 2.6.20.7-1, 3D acceleration works stable
+#     console switching broken
+
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -29,7 +33,7 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	52
+%define		_rel	53
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
@@ -48,7 +52,7 @@ URL:		http://ati.amd.com/support/drivers/linux/linux-radeon.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
 %{?with_userspace:BuildRequires:	qt-devel}
-BuildRequires:	rpmbuild(macros) >= 1.330
+BuildRequires:	rpmbuild(macros) >= 1.382
 Requires:	X11-OpenGL-core >= %{_min_eq_x11}
 Requires:	X11-Xserver
 %{?with_kernel:Requires:	X11-driver-firegl(kernel)}
@@ -89,7 +93,7 @@ Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
 Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:%requires_releq_kernel}
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
@@ -99,21 +103,21 @@ ATI kernel module for FireGL support.
 %description -n kernel%{_alt_kernel}-video-firegl -l pl
 Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 
-%package -n kernel%{_alt_kernel}-smp-video-firegl
-Summary:	ATI kernel module for FireGL support
-Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
-Release:	%{_rel}@%{_kernel_ver_str}
-License:	ATI
-Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
-Requires(post,postun):	/sbin/depmod
-Provides:	X11-driver-firegl(kernel)
+#%package -n kernel%{_alt_kernel}-smp-video-firegl
+#Summary:	ATI kernel module for FireGL support
+#Summary(pl):	Modu³ j±dra oferujcy wsparcie dla ATI FireGL
+#Release:	%{_rel}@%{_kernel_ver_str}
+#License:	ATI
+#Group:		Base/Kernel
+#%{?with_dist_kernel:%requires_releq_kernel_smp}
+#Requires(post,postun):	/sbin/depmod
+#Provides:	X11-driver-firegl(kernel)
 
-%description -n kernel%{_alt_kernel}-smp-video-firegl
-ATI kernel module for FireGL support.
+#%description -n kernel%{_alt_kernel}-smp-video-firegl
+#ATI kernel module for FireGL support.
 
-%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl
-Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
+#%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl
+#Modu³ j±dra oferujcy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
@@ -194,11 +198,11 @@ rm -rf $RPM_BUILD_ROOT
 %postun -n kernel%{_alt_kernel}-video-firegl
 %depmod %{_kernel_ver}
 
-%post	-n kernel%{_alt_kernel}-smp-video-firegl
-%depmod %{_kernel_ver}smp
+#%post	-n kernel%{_alt_kernel}-smp-video-firegl
+#%depmod %{_kernel_ver}smp
 
-%postun -n kernel%{_alt_kernel}-smp-video-firegl
-%depmod %{_kernel_ver}smp
+#%postun -n kernel%{_alt_kernel}-smp-video-firegl
+#%depmod %{_kernel_ver}smp
 
 %if %{with userspace}
 %files
@@ -241,9 +245,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/modules/%{_kernel_ver}/misc/*.ko*
 %endif
 
-%if %{with smp} && %{with dist_kernel}
-%files -n kernel%{_alt_kernel}-smp-video-firegl
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/misc/*.ko*
-%endif
+#%if %{with smp} && %{with dist_kernel}
+#%files -n kernel%{_alt_kernel}-smp-video-firegl
+#%defattr(644,root,root,755)
+#/lib/modules/%{_kernel_ver}smp/misc/*.ko*
+#%endif
 %endif
