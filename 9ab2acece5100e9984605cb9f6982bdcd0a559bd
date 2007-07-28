@@ -1,0 +1,1 @@
+- proper rpm macros are not enough, you need also a proper kernel (updated kernel-module-build version)
