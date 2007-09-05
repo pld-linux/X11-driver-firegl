@@ -29,7 +29,7 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	52
+%define		_rel	53
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
