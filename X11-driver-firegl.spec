@@ -9,12 +9,12 @@
 %bcond_without	incall		# include all sources in srpm
 %bcond_with	grsec_kernel	# build for kernel-grsecurity
 #
-%if !%{with kernel}
-%undefine with_dist_kernel
-%endif
-#
 %if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
 %define	alt_kernel	grsecurity
+%endif
+#
+%if %{without kernel}
+%undefine with_dist_kernel
 %endif
 #
 %define		_min_eq_x11	1:6.9.0
