@@ -8,15 +8,17 @@
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
 %bcond_with	grsec_kernel	# build for kernel-grsecurity
-#
+
 %if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
 %define	alt_kernel	grsecurity
 %endif
-#
 %if %{without kernel}
 %undefine with_dist_kernel
 %endif
-#
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
+%endif
+
 %define		_min_eq_x11	1:6.9.0
 %define		_max_x11	1:7.0.0
 %define		x11ver		x690
