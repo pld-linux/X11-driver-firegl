@@ -8,9 +8,18 @@
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
 %bcond_with	grsec_kernel	# build for kernel-grsecurity
+%bcond_with	desktop_kernel	# build for kernel-desktop (disables UP and SMP)
 
-%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
+%if %{with kernel} && %{with dist_kernel}
+%if %{with grsec_kernel}
 %define	alt_kernel	grsecurity
+%endif
+%if %{with desktop_kernel}
+%define	alt_kernel	desktop
+%define	requires_releq_kernel_up %requires_releq_kernel
+%undefine	with_up
+%undefine	with_smp
+%endif
 %endif
 %if %{without kernel}
 %undefine with_dist_kernel
@@ -51,7 +60,7 @@ URL:		http://ati.amd.com/support/drivers/linux/linux-radeon.html
 #BuildRequires:	X11-devel >= %{_min_eq_x11}	# disabled for now
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
 %{?with_userspace:BuildRequires:	qt-devel}
-BuildRequires:	rpmbuild(macros) >= 1.330
+BuildRequires:	rpmbuild(macros) >= 1.406
 Requires:	X11-OpenGL-core >= %{_min_eq_x11}
 Requires:	X11-Xserver
 %{?with_kernel:Requires:	X11-driver-firegl(kernel)}
@@ -238,7 +247,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
+%if %{with up} || %{without dist_kernel} || %{with desktop_kernel}
 %files -n kernel%{_alt_kernel}-video-firegl
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
