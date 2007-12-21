@@ -1,11 +1,11 @@
---- ./common/lib/modules/fglrx/build_mod/firegl_public.h.org	2007-10-12 11:58:44.358677250 +0200
-+++ ./common/lib/modules/fglrx/build_mod/firegl_public.h	2007-10-12 11:59:05.239709409 +0200
-@@ -172,7 +172,7 @@
+--- firegl_public.h.orig	2007-12-20 19:30:38.000000000 +0100
++++ firegl_public.h	2007-12-21 13:27:26.888802758 +0100
+@@ -163,7 +163,7 @@
+ #define PMD_PAGE(pmd) (pfn_to_page(pmd_val(pmd) >> PAGE_SHIFT))
  #endif
  
- #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)
 -#if !defined(CONFIG_SMP) || defined(CONFIG_SUSPEND_SMP) // ACPI not working on older SMP kernel (prior to 2.6.13) 
 +#if !defined(CONFIG_SMP) || defined(CONFIG_SUSPEND_SMP) || defined(CONFIG_PM_SLEEP_SMP) // ACPI not working on older SMP kernel (prior to 2.6.13) 
  #define FIREGL_POWER_MANAGEMENT
  #endif
- #endif
+ 
