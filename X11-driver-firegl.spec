@@ -33,7 +33,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl.UTF-8):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
 Version:	8.40.4
-%define		_rel	0.1
+%define		_rel	1
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Group:		X11
@@ -168,7 +168,8 @@ ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
 ln -sf libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/libGL.so.1
  
 cp -r common%{_sysconfdir}/ati/control $RPM_BUILD_ROOT%{_sysconfdir}/ati/control
-echo "LIBGL_DRIVERS_PATH=%{_libdir}/xorg/modules/dri" > $RPM_BUILD_ROOT%{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
+echo "LIBGL_DRIVERS_PATH=%{_libdir}/modules/dri" > $RPM_BUILD_ROOT%{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
+echo "523115c90bdf7fd078300d64949e8579:6a1f21f939f24fe748073e55f5b3b54c630927f048f23e8431103e51adacb34a:645024af39ee19e94b096b56a0f8e04e660925fe38ba4ae51e056f57f6abb11a640225f039e819e04c086b56a7fbbd4d610024f938ba4ae119546c07f6adb118" >$RPM_BUILD_ROOT%{_sysconfdir}/ati/signature 
 
 install common/usr/include/GL/*.h $RPM_BUILD_ROOT/usr/include/GL
 # install common%{_includedir}/X11/extensions/*.h $RPM_BUILD_ROOT%{_includedir}/X11/extensions
@@ -190,6 +191,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc ATI_LICENSE.TXT common%{_docdir}/fglrx/*.html common%{_docdir}/fglrx/articles common%{_docdir}/fglrx/release-notes common%{_docdir}/fglrx/user-manual
+%{_sysconfdir}/ati/signature
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/control
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
 %attr(755,root,root) %{_bindir}/*
