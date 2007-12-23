@@ -1,6 +1,6 @@
 #
 # firegl driver for Ac 
-# Testd on highter than standard kernels (LINUX_2_6 family)
+# For highter than standard Ac kernels (LINUX_2_6 family)
 
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -32,14 +32,16 @@
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl.UTF-8):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
-Version:	8.40.4
+Epoch:		1
+Version:	7.12
 %define		_rel	1
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Group:		X11
-Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.x86_64.run
-# Source0-md5:	d02add61ee36a4183510317c3c42b147
+Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-8.443.1-x86.x86_64.run
+# Source0-md5:	5d40b0c7a6f9e8356fdcd38052ae5e7b
 Patch0:		%{name}-kh.patch
+Patch1:		xorg-driver-video-fglrx-pm.patch
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 %{?with_userspace:BuildRequires:	OpenGL-GLU-devel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
@@ -128,7 +130,10 @@ sh %{SOURCE0} --extract .
 cp arch/%{arch_dir}/lib/modules/fglrx/build_mod/* common/lib/modules/fglrx/build_mod
 
 cd common
-%{?with_dist_kernel:%patch0 -p1}
+%if %{with dist_kernel}
+%patch0 -p1
+%endif
+#%%patch1 -p2
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
