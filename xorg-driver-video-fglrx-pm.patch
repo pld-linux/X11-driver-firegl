@@ -1,5 +1,5 @@
---- firegl_public.h.orig	2007-12-20 19:30:38.000000000 +0100
-+++ firegl_public.h	2007-12-21 13:27:26.888802758 +0100
+--- ./common/lib/modules/fglrx/build_mod/firegl_public.h.orig	2007-12-20 19:30:38.000000000 +0100
++++ ./common/lib/modules/fglrx/build_mod/firegl_public.h	2007-12-21 13:27:26.888802758 +0100
 @@ -163,7 +163,7 @@
  #define PMD_PAGE(pmd) (pfn_to_page(pmd_val(pmd) >> PAGE_SHIFT))
  #endif
