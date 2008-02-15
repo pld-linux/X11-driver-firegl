@@ -7,20 +7,7 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_without	incall		# include all sources in srpm
-%bcond_with	grsec_kernel	# build for kernel-grsecurity
-%bcond_with	desktop_kernel	# build for kernel-desktop (disables UP and SMP)
 
-%if %{with kernel} && %{with dist_kernel}
-%if %{with grsec_kernel}
-%define	alt_kernel	grsecurity
-%endif
-%if %{with desktop_kernel}
-%define	alt_kernel	desktop
-%define	requires_releq_kernel_up %requires_releq_kernel
-%undefine	with_up
-%undefine	with_smp
-%endif
-%endif
 %if %{without kernel}
 %undefine with_dist_kernel
 %endif
@@ -40,13 +27,12 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		_rel	61
 %define		pname	X11-driver-firegl
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl):	Sterowniki do akceleratorów graficznych ATI
 Name:		%{pname}%{_alt_kernel}
 Version:	8.36.5
-Release:	%{_rel}
+Release:	62
 License:	ATI Binary (parts are GPL)
 Group:		X11
 Source0:	http://www2.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.x86_64.run
@@ -98,10 +84,9 @@ akcelerowany OpenGL.
 %package -n kernel%{_alt_kernel}-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
-Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_up}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
@@ -114,10 +99,9 @@ Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
 %package -n kernel%{_alt_kernel}-smp-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
-Release:	%{_rel}@%{_kernel_ver_str}
 License:	ATI
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel_smp}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
 Provides:	X11-driver-firegl(kernel)
 
