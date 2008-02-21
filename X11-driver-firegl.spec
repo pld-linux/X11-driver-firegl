@@ -1,6 +1,6 @@
 #
 # firegl driver for Ac 
-# For highter than standard Ac kernels (LINUX_2_6 family)
+# For later kernel versions (LINUX_2_6 family) than standard Ac kernels 
 
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
@@ -15,7 +15,6 @@
 # Either we use rpm-macros from Th and define
 %define		_libdir		/usr/X11R6/lib/
 # nor use Ac rpm-macros and define kernel macros 
-
 
 %if !%{with kernel}
 %undefine with_dist_kernel
@@ -38,10 +37,9 @@ Version:	8.1
 Release:	%{_rel}
 License:	ATI Binary (parts are GPL)
 Group:		X11
-# Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-8.42.3-x86.x86_64.run
 Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-8-01-x86.x86_64.run
 Patch0:		%{name}-kh.patch
-Patch1:		xorg-driver-video-fglrx-pm.patch
+
 URL:		http://www.ati.com/support/drivers/linux/radeon-linux.html
 %{?with_userspace:BuildRequires:	OpenGL-GLU-devel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
@@ -133,7 +131,6 @@ cd common
 %if %{with dist_kernel}
 %patch0 -p1
 %endif
-#%%patch1 -p2
 cd -
 
 install -d common%{_prefix}/{%{_lib},bin}
@@ -167,14 +164,12 @@ cp -r common%{_libdir}/lib* $RPM_BUILD_ROOT%{_libdir}
 cp -r common%{_libdir}/modules/* $RPM_BUILD_ROOT%{_libdir}/modules/
 cp -r common%{_sysconfdir}/ati/* $RPM_BUILD_ROOT%{_sysconfdir}/ati/
 
-
 # OpenGL ABI for Linux compatibility
 ln -sf libGL.so.1 $RPM_BUILD_ROOT%{_libdir}/libGL.so
 ln -sf libGL.so.1.2 $RPM_BUILD_ROOT%{_libdir}/libGL.so.1
  
 cp -r common%{_sysconfdir}/ati/control $RPM_BUILD_ROOT%{_sysconfdir}/ati/control
 echo "LIBGL_DRIVERS_PATH=%{_libdir}/modules/dri" > $RPM_BUILD_ROOT%{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
-## echo "523115c90bdf7fd078300d64949e8579:6a1f21f939f24fe748073e55f5b3b54c630927f048f23e8431103e51adacb34a:645024af39ee19e94b096b56a0f8e04e660925fe38ba4ae51e056f57f6abb11a640225f039e819e04c086b56a7fbbd4d610024f938ba4ae119546c07f6adb118" >$RPM_BUILD_ROOT%{_sysconfdir}/ati/signature 
 
 install common/usr/include/GL/*.h $RPM_BUILD_ROOT/usr/include/GL
 # install common%{_includedir}/X11/extensions/*.h $RPM_BUILD_ROOT%{_includedir}/X11/extensions
