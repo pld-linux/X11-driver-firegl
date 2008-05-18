@@ -29,7 +29,7 @@
 
 %define		pname	X11-driver-firegl
 Summary:	Linux Drivers for ATI graphics accelerators
-Summary(pl):	Sterowniki do akceleratorów graficznych ATI
+Summary(pl.UTF-8):	Sterowniki do akceleratorÃ³w graficznych ATI
 Name:		%{pname}%{_alt_kernel}
 Version:	8.36.5
 Release:	63
@@ -75,15 +75,15 @@ Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
 the FireGL 8700/8800, E1, Z1/X1 graphics accelerators. This package
 provides 2D display drivers and hardware accelerated OpenGL.
 
-%description -l pl
+%description -l pl.UTF-8
 Sterowniki do kart graficznych ATI Radeon 8500, 9700, Mobility M9 oraz
-graficznych akceleratorów FireGL 8700/8800, E1, Z1/X1. Pakiet
-dostarcza sterowniki obs³uguj±ce wy¶wietlanie 2D oraz sprzêtowo
+graficznych akceleratorÃ³w FireGL 8700/8800, E1, Z1/X1. Pakiet
+dostarcza sterowniki obsÅ‚ugujÄ…ce wyÅ›wietlanie 2D oraz sprzÄ™towo
 akcelerowany OpenGL.
 
 %package -n kernel%{_alt_kernel}-video-firegl
 Summary:	ATI kernel module for FireGL support
-Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
+Summary(pl.UTF-8):	ModuÅ‚ jÄ…dra oferujÄ…cy wsparcie dla ATI FireGL
 License:	ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
@@ -93,12 +93,12 @@ Provides:	X11-driver-firegl(kernel)
 %description -n kernel%{_alt_kernel}-video-firegl
 ATI kernel module for FireGL support.
 
-%description -n kernel%{_alt_kernel}-video-firegl -l pl
-Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
+%description -n kernel%{_alt_kernel}-video-firegl -l pl.UTF-8
+ModuÅ‚ jÄ…dra oferujÄ…cy wsparcie dla ATI FireGL.
 
 %package -n kernel%{_alt_kernel}-smp-video-firegl
 Summary:	ATI kernel module for FireGL support
-Summary(pl):	Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL
+Summary(pl.UTF-8):	ModuÅ‚ jÄ…dra oferujÄ…cy wsparcie dla ATI FireGL
 License:	ATI
 Group:		Base/Kernel
 %{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
@@ -108,8 +108,8 @@ Provides:	X11-driver-firegl(kernel)
 %description -n kernel%{_alt_kernel}-smp-video-firegl
 ATI kernel module for FireGL support.
 
-%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl
-Modu³ j±dra oferuj±cy wsparcie dla ATI FireGL.
+%description -n kernel%{_alt_kernel}-smp-video-firegl -l pl.UTF-8
+ModuÅ‚ jÄ…dra oferujÄ…cy wsparcie dla ATI FireGL.
 
 %prep
 %setup -q -c -T
