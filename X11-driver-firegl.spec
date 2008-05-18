@@ -30,7 +30,7 @@ Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl.UTF-8):	Sterowniki do akceleratorów graficznych ATI
 Name:		%{pname}%{_alt_kernel}
 Version:	8.36.5
-Release:	63
+Release:	64
 License:	ATI Binary (parts are GPL)
 Group:		X11
 Source0:	http://www2.ati.com/drivers/linux/ati-driver-installer-%{version}-x86.x86_64.run
