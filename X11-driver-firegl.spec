@@ -1,3 +1,14 @@
+# TODO
+# - unpackaged files:
+#   /usr/X11R6/lib/libatiadlxx.so
+#   /usr/X11R6/lib/libfglrx_dm.a
+#   /usr/X11R6/lib/libfglrx_gamma.a
+#   /usr/X11R6/lib/libfglrx_pp.a
+#   /usr/X11R6/lib/libfglrx_tvout.a
+#   /usr/X11R6/lib/modules/amdxmm.so
+#   /usr/X11R6/lib/modules/esut.a
+#   /usr/include/GL/glATI.h
+#   /usr/include/GL/glxATI.h
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -24,6 +35,7 @@
 %endif
 
 %define		rel	1
+%define		ver	%(echo %{version}  | tr . -)
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl.UTF-8):	Sterowniki do akceleratorów graficznych ATI
 Name:		X11-driver-firegl
@@ -32,8 +44,8 @@ Release:	%{rel}
 Epoch:		2
 License:	ATI Binary (parts are GPL)
 Group:		X11
-Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-8-02-x86.x86_64.run
-# Source0-md5:	bcdf3c19c0b7a7c2051d751d5131d426
+Source0:	http://dlmdownloads.ati.com/drivers/linux/ati-driver-installer-%{ver}-x86.x86_64.run
+# Source0-md5:	b48a5b7ba10a283d562c2bbecd72315a
 Patch0:		%{name}-kh.patch
 URL:		http://ati.amd.com/support/drivers/linux/linux-radeon.html
 %{?with_userspace:BuildRequires:	OpenGL-GLU-devel}
@@ -107,6 +119,7 @@ License:	ATI
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
+Obsoletes:	kernel%{_alt_kernel}-smp-video-firegl
 
 %description -n kernel%{_alt_kernel}-video-firegl
 ATI kernel module for FireGL support.
@@ -186,7 +199,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc ATI_LICENSE.TXT common%{_docdir}/fglrx/*.html common%{_docdir}/fglrx/articles common%{_docdir}/fglrx/user-manual
 # common%{_docdir}/fglrx/release-notes
 %{_sysconfdir}/ati/signature
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/amdpcsdb.default
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/atiogl.xml
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/authatieventsd.sh
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/control
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/logo.xbm.example
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/logo_mask.xbm.example
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_x_libraries}/libGL.so.*.*
