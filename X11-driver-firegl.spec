@@ -58,7 +58,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_noautoreqdep	libGL.so.1
 
-%define		GCC_VER_MAJ		%(V=%{cc_version}; echo ${V%%.*})
+%define		GCC_VER_MAJ		%(V=%{cc_version}; echo ${V%%%%.*})
 
 %description
 Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
