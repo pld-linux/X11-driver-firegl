@@ -40,10 +40,9 @@ URL:		http://ati.amd.com/support/drivers/linux/linux-radeon.html
 BuildRequires:	X11-devel >= 1:6.9.0
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.20.2}
 %{?with_userspace:BuildRequires:	qt-devel}
-BuildRequires:	rpmbuild(macros) >= 1.379
+BuildRequires:	rpmbuild(macros) >= 1.453
 Requires:	X11-OpenGL-core >= 1:6.9.0
 Requires:	X11-Xserver
-%{?with_kernel:Requires:	X11-driver-firegl(kernel)}
 Requires:	X11-libs < 1:7.0.0
 Requires:	X11-libs >= 1:6.9.0
 Requires:	X11-modules < 1:7.0.0
@@ -57,9 +56,9 @@ Obsoletes:	XFree86-driver-firegl
 ExclusiveArch:	i586 i686 athlon pentium3 pentium4 %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_ccver	%(rpm -q --qf "%{VERSION}" gcc | sed 's/\\..*//')
-
 %define		_noautoreqdep	libGL.so.1
+
+%define		GCC_VER_MAJ		%(V=%{cc_version}; echo ${V%%.*})
 
 %description
 Display driver files for the ATI Radeon 8500, 9700, Mobility M9 and
@@ -103,12 +102,11 @@ sterownika ATI dla kart graficznych ATI Radeon.
 %package -n kernel%{_alt_kernel}-video-firegl
 Summary:	ATI kernel module for FireGL support
 Summary(pl.UTF-8):	Moduł jądra oferujący wsparcie dla ATI FireGL
-Release:	%{rel}@%{_kernel_ver_str}
+Release:	%{rel}@%{_kernel_vermagic}
 License:	ATI
 Group:		Base/Kernel
-%{?with_dist_kernel:%requires_releq_kernel}
 Requires(post,postun):	/sbin/depmod
-Provides:	X11-driver-firegl(kernel)
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 
 %description -n kernel%{_alt_kernel}-video-firegl
 ATI kernel module for FireGL support.
@@ -137,7 +135,7 @@ cp -r arch/%{arch_dir}%{_prefix}/X11R6/bin/* common/usr/bin
 %if %{with kernel}
 cd common/lib/modules/fglrx/build_mod
 cp -f 2.6.x/Makefile .
-%build_kernel_modules -m fglrx GCC_VER_MAJ=%{_ccver}
+%build_kernel_modules -m fglrx GCC_VER_MAJ=%{GCC_VER_MAJ}
 cd -
 %endif
 
