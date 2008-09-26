@@ -1,14 +1,3 @@
-# TODO
-# - unpackaged files:
-#   /usr/X11R6/lib/libatiadlxx.so
-#   /usr/X11R6/lib/libfglrx_dm.a
-#   /usr/X11R6/lib/libfglrx_gamma.a
-#   /usr/X11R6/lib/libfglrx_pp.a
-#   /usr/X11R6/lib/libfglrx_tvout.a
-#   /usr/X11R6/lib/modules/amdxmm.so
-#   /usr/X11R6/lib/modules/esut.a
-#   /usr/include/GL/glATI.h
-#   /usr/include/GL/glxATI.h
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -34,7 +23,7 @@
 %define		arch_dir	x86_64
 %endif
 
-%define		rel	1
+%define		rel	2
 %define		ver	%(echo %{version}  | tr . -)
 Summary:	Linux Drivers for ATI graphics accelerators
 Summary(pl.UTF-8):	Sterowniki do akceleratorów graficznych ATI
@@ -166,6 +155,13 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/{ati,env.d},%{_bindir},%{_x_libraries}
 install common/usr/bin/{fgl_glxgears,fglrxinfo,aticonfig,fglrx_xgamma} \
 	$RPM_BUILD_ROOT%{_bindir}
 
+#remove not needed files
+rm -f common%{_x_libraries}/libfglrx_dm.a
+rm -f common%{_x_libraries}/libfglrx_gamma.a
+rm -f common%{_x_libraries}/libfglrx_pp.a
+rm -f common%{_x_libraries}/libfglrx_tvout.a
+rm -f common%{_x_libraries}/modules/esut.a
+
 cp -r common%{_x_libraries}/lib* $RPM_BUILD_ROOT%{_x_libraries}
 cp -r common%{_x_libraries}/modules/* $RPM_BUILD_ROOT%{_x_libraries}/modules
 cp -r common/etc/ati/* $RPM_BUILD_ROOT%{_sysconfdir}/ati/
@@ -176,9 +172,6 @@ ln -sf libGL.so.1.2 $RPM_BUILD_ROOT%{_x_libraries}/libGL.so.1
 
 cp -r common/etc/ati/control $RPM_BUILD_ROOT%{_sysconfdir}/ati/control
 echo "LIBGL_DRIVERS_PATH=%{_x_libraries}/modules/dri" > $RPM_BUILD_ROOT%{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
-
-install common/usr/include/GL/*.h $RPM_BUILD_ROOT%{_includedir}/GL
-# install common/usr/include/X11/extensions/*.h $RPM_BUILD_ROOT%{_includedir}/X11/extensions
 %endif
 
 %clean
@@ -207,6 +200,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/ati/logo_mask.xbm.example
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/env.d/LIBGL_DRIVERS_PATH
 %attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_x_libraries}/libatiadlxx.so
 %attr(755,root,root) %{_x_libraries}/libGL.so.*.*
 %attr(755,root,root) %{_x_libraries}/libGL.so.1
 %attr(755,root,root) %{_x_libraries}/libGL.so
@@ -214,6 +208,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_x_libraries}/libfglrx_gamma.so.*.*
 %attr(755,root,root) %{_x_libraries}/libfglrx_pp.so.*.*
 %attr(755,root,root) %{_x_libraries}/libfglrx_tvout.so.*.*
+%attr(755,root,root) %{_x_libraries}/modules/amdxmm.so
 %attr(755,root,root) %{_x_libraries}/modules/glesx.so
 %attr(755,root,root) %{_x_libraries}/modules/dri/fglrx_dri.so
 %attr(755,root,root) %{_x_libraries}/modules/drivers/fglrx_drv.so
